@@ -1,0 +1,255 @@
+{
+  "revision": 1,
+  "uid": "dt-policy-violations",
+  "title": "Dependency-Track / Policy violations",
+  "tags": ["dependency-track"],
+  "editable": true,
+  "schemaVersion": 41,
+  "time": { "from": "now-90d", "to": "now" },
+  "refresh": "",
+  "links": [
+    {
+      "title": "Dependency-Track",
+      "type": "dashboards",
+      "tags": ["dependency-track"],
+      "asDropdown": true,
+      "includeVars": false,
+      "keepTime": true
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Data source",
+        "type": "datasource",
+        "query": "windkube-dependencytrack-datasource",
+        "current": {}
+      },
+      {
+        "name": "project",
+        "label": "Project",
+        "type": "query",
+        "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+        "query": { "refId": "project", "type": "projects", "onlyLatest": true },
+        "refresh": 1,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": { "text": ["All"], "value": ["$__all"] }
+      },
+      {
+        "name": "policy",
+        "label": "Policy",
+        "type": "query",
+        "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+        "query": { "refId": "policy", "type": "policies" },
+        "refresh": 1,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "current": { "text": ["All"], "value": ["$__all"] }
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "Annotations & Alerts",
+        "builtIn": 1,
+        "type": "dashboard",
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)"
+      },
+      {
+        "name": "Policy violations",
+        "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+        "enable": true,
+        "iconColor": "red",
+        "target": {
+          "refId": "Anno",
+          "queryType": "events",
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true },
+          "events": { "kinds": ["violation"] },
+          "violations": { "policies": ["$policy"] }
+        }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Portfolio violations",
+      "description": "Current portfolio-wide counts, independent of the variables.",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 4 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "portfolioMetrics",
+          "mode": "current",
+          "metrics": [
+            "policyViolationsFail",
+            "policyViolationsWarn",
+            "policyViolationsInfo",
+            "policyViolationsUnaudited",
+            "policyViolationsSecurityTotal",
+            "policyViolationsLicenseTotal",
+            "policyViolationsOperationalTotal"
+          ]
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "center",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "fixed", "fixedColor": "text" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Policy violations (fail)" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Policy violations (warn)" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }]
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Violations over time",
+      "gridPos": { "x": 0, "y": 4, "w": 24, "h": 8 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "portfolioMetrics",
+          "mode": "timeseries",
+          "metrics": ["policyViolationsFail", "policyViolationsWarn", "policyViolationsInfo"]
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "stepAfter",
+            "fillOpacity": 20,
+            "stacking": { "mode": "normal", "group": "A" }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Policy violations (fail)" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Policy violations (warn)" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }]
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": "table",
+      "title": "Violations per project and policy",
+      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 8 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "violations",
+          "format": "count",
+          "violations": { "groupByPolicy": true, "policies": ["$policy"] },
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": { "showHeader": true, "cellHeight": "sm", "sortBy": [{ "displayName": "Violations", "desc": true }] },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": { "tags": true },
+            "renameByName": {
+              "project": "Project",
+              "version": "Version",
+              "policy": "Policy",
+              "state": "State",
+              "type": "Risk type"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "count" },
+            "properties": [
+              { "id": "displayName", "value": "Violations" },
+              { "id": "custom.cellOptions", "value": { "type": "gauge", "mode": "basic" } },
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "type": "table",
+      "title": "Violations",
+      "gridPos": { "x": 0, "y": 20, "w": 24, "h": 12 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "violations",
+          "format": "table",
+          "violations": { "policies": ["$policy"] },
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": { "showHeader": true, "cellHeight": "sm", "sortBy": [{ "displayName": "Occurred", "desc": true }] },
+      "transformations": [{ "id": "organize", "options": { "excludeByName": { "Tags": true, "PURL": true } } }],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".* UUID$" },
+            "properties": [{ "id": "custom.hidden", "value": true }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "State" },
+            "properties": [
+              { "id": "custom.cellOptions", "value": { "type": "color-text" } },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": { "FAIL": { "color": "red", "index": 0 }, "WARN": { "color": "orange", "index": 1 } }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

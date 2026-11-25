@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "datasource",
+  "name": "Dependency-Track",
+  "id": "windkube-dependencytrack-datasource",
+  "metrics": true,
+  "backend": true,
+  "alerting": true,
+  "annotations": true,
+  "executable": "gpx_dependencytrack",
+  "info": {
+    "description": "Query OWASP Dependency-Track metrics, findings and policy violations.",
+    "author": {
+      "name": "WindKube"
+    },
+    "keywords": ["dependency-track", "owasp", "sbom", "vulnerabilities", "security", "supply chain"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=13.0.0",
+    "plugins": []
+  }
+}

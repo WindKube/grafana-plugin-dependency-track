@@ -1,0 +1,274 @@
+{
+  "revision": 1,
+  "uid": "dt-findings",
+  "title": "Dependency-Track / Findings",
+  "tags": ["dependency-track"],
+  "editable": true,
+  "schemaVersion": 41,
+  "time": { "from": "now-90d", "to": "now" },
+  "refresh": "",
+  "links": [
+    {
+      "title": "Dependency-Track",
+      "type": "dashboards",
+      "tags": ["dependency-track"],
+      "asDropdown": true,
+      "includeVars": false,
+      "keepTime": true
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Data source",
+        "type": "datasource",
+        "query": "windkube-dependencytrack-datasource",
+        "current": {}
+      },
+      {
+        "name": "project",
+        "label": "Project",
+        "type": "query",
+        "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+        "query": { "refId": "project", "type": "projects", "onlyLatest": true },
+        "refresh": 1,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": { "text": ["All"], "value": ["$__all"] }
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "Annotations & Alerts",
+        "builtIn": 1,
+        "type": "dashboard",
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Findings",
+      "description": "Current portfolio-wide counts.",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 4 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "portfolioMetrics",
+          "mode": "current",
+          "metrics": [
+            "findingsTotal",
+            "findingsUnaudited",
+            "findingsAudited",
+            "suppressed",
+            "kev",
+            "vulnerableComponents"
+          ]
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "center",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "fixed", "fixedColor": "text" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Known exploited (KEV)" },
+            "properties": [
+              { "id": "color", "value": { "mode": "thresholds" } },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    { "color": "green", "value": null },
+                    { "color": "red", "value": 1 }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "type": "bargauge",
+      "title": "Unaudited findings by project",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 9 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "projectMetrics",
+          "mode": "current",
+          "metrics": ["findingsUnaudited"],
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "namePlacement": "left",
+        "showUnfilled": true,
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "displayName": "${__field.labels.project}",
+          "color": { "mode": "fixed", "fixedColor": "orange" },
+          "links": [
+            {
+              "title": "Project dashboard",
+              "url": "/d/dt-project?var-project=${__field.labels.project}&${datasource:queryparam}&${__url_time_range}"
+            }
+          ]
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Findings over time",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 9 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "portfolioMetrics",
+          "mode": "timeseries",
+          "metrics": ["findingsAudited", "findingsUnaudited", "suppressed"]
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "text" },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "stepAfter",
+            "fillOpacity": 20,
+            "stacking": { "mode": "normal", "group": "A" }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Findings audited" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Findings unaudited" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }]
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "type": "table",
+      "title": "Known exploited vulnerabilities",
+      "description": "Findings listed in the CISA KEV catalog.",
+      "gridPos": { "x": 0, "y": 13, "w": 24, "h": 6 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "findings",
+          "format": "table",
+          "findings": { "kevOnly": true },
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": { "showHeader": true, "cellHeight": "sm" },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": { "excludeByName": { "Tags": true, "PURL": true, "Attributed": true, "KEV": true } }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".* UUID$" },
+            "properties": [{ "id": "custom.hidden", "value": true }]
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "type": "table",
+      "title": "Critical and high findings",
+      "gridPos": { "x": 0, "y": 19, "w": 24, "h": 10 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "findings",
+          "format": "table",
+          "findings": { "severities": ["CRITICAL", "HIGH"] },
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": { "showHeader": true, "cellHeight": "sm", "sortBy": [{ "displayName": "CVSS", "desc": true }] },
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Tags": true, "PURL": true, "Attributed": true } } }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".* UUID$" },
+            "properties": [{ "id": "custom.hidden", "value": true }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Severity" },
+            "properties": [
+              { "id": "custom.cellOptions", "value": { "type": "color-text" } },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "CRITICAL": { "color": "dark-red", "index": 0 },
+                      "HIGH": { "color": "orange", "index": 1 }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "EPSS" },
+            "properties": [
+              { "id": "unit", "value": "percentunit" },
+              { "id": "decimals", "value": 2 }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

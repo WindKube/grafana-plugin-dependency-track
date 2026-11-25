@@ -1,0 +1,351 @@
+{
+  "revision": 1,
+  "uid": "dt-portfolio-overview",
+  "title": "Dependency-Track / Portfolio overview",
+  "tags": ["dependency-track"],
+  "editable": true,
+  "schemaVersion": 41,
+  "time": { "from": "now-90d", "to": "now" },
+  "refresh": "",
+  "links": [
+    {
+      "title": "Dependency-Track",
+      "type": "dashboards",
+      "tags": ["dependency-track"],
+      "asDropdown": true,
+      "includeVars": false,
+      "keepTime": true
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Data source",
+        "type": "datasource",
+        "query": "windkube-dependencytrack-datasource",
+        "current": {}
+      },
+      {
+        "name": "project",
+        "label": "Project",
+        "type": "query",
+        "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+        "query": { "refId": "project", "type": "projects", "onlyLatest": true },
+        "refresh": 1,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": { "text": ["All"], "value": ["$__all"] }
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "Annotations & Alerts",
+        "builtIn": 1,
+        "type": "dashboard",
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)"
+      },
+      {
+        "name": "Dependency-Track events",
+        "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+        "enable": true,
+        "iconColor": "purple",
+        "target": {
+          "refId": "Anno",
+          "queryType": "events",
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true },
+          "events": { "kinds": ["bomImport", "violation"] }
+        }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Vulnerabilities by severity",
+      "description": "Current portfolio-wide counts.",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 5 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "portfolioMetrics",
+          "mode": "current",
+          "metrics": ["critical", "high", "medium", "low", "unassigned"]
+        }
+      ],
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "center",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "fixed", "fixedColor": "text" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Critical" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "dark-red" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "High" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Medium" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "yellow" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Low" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "blue" } }]
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Portfolio",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 5 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "portfolioMetrics",
+          "mode": "current",
+          "metrics": ["projects", "vulnerableProjects", "kev", "policyViolationsFail", "inheritedRiskScore"]
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "center",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "fixed", "fixedColor": "text" } },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "Known exploited.*|Policy violations.*" },
+            "properties": [
+              { "id": "color", "value": { "mode": "thresholds" } },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    { "color": "green", "value": null },
+                    { "color": "red", "value": 1 }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Vulnerabilities over time",
+      "gridPos": { "x": 0, "y": 5, "w": 24, "h": 8 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "portfolioMetrics",
+          "mode": "timeseries",
+          "metrics": ["critical", "high", "medium", "low", "unassigned"]
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "text" },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "stepAfter",
+            "fillOpacity": 20,
+            "stacking": { "mode": "normal", "group": "A" }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Critical" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "dark-red" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "High" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Medium" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "yellow" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Low" },
+            "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "blue" } }]
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "type": "bargauge",
+      "title": "Critical and high by project",
+      "description": "Latest version of each selected project. Click a bar to open the project dashboard.",
+      "gridPos": { "x": 0, "y": 13, "w": 12, "h": 9 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "projectMetrics",
+          "mode": "current",
+          "metrics": ["critical", "high"],
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "namePlacement": "left",
+        "showUnfilled": true,
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "color": { "mode": "fixed", "fixedColor": "text" },
+          "links": [
+            {
+              "title": "Project dashboard",
+              "url": "/d/dt-project?var-project=${__field.labels.project}&${datasource:queryparam}&${__url_time_range}"
+            }
+          ]
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".* Critical$" },
+            "properties": [
+              { "id": "displayName", "value": "${__field.labels.project} · critical" },
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "dark-red" } }
+            ]
+          },
+          {
+            "matcher": { "id": "byRegexp", "options": ".* High$" },
+            "properties": [
+              { "id": "displayName", "value": "${__field.labels.project} · high" },
+              { "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "type": "bargauge",
+      "title": "Inherited risk score by project",
+      "gridPos": { "x": 12, "y": 13, "w": 12, "h": 9 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "projectMetrics",
+          "mode": "current",
+          "metrics": ["inheritedRiskScore"],
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "namePlacement": "left",
+        "showUnfilled": true,
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "displayName": "${__field.labels.project}",
+          "color": { "mode": "continuous-GrYlRd" },
+          "links": [
+            {
+              "title": "Project dashboard",
+              "url": "/d/dt-project?var-project=${__field.labels.project}&${datasource:queryparam}&${__url_time_range}"
+            }
+          ]
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 6,
+      "type": "table",
+      "title": "Projects",
+      "gridPos": { "x": 0, "y": 22, "w": 24, "h": 8 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "projects",
+          "format": "table",
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": { "showHeader": true, "cellHeight": "sm", "sortBy": [{ "displayName": "Risk score", "desc": true }] },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": { "excludeByName": { "Active": true, "Latest": true, "BOM format": true, "Classifier": true } }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".* UUID$" },
+            "properties": [{ "id": "custom.hidden", "value": true }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Critical" },
+            "properties": [
+              { "id": "custom.cellOptions", "value": { "type": "color-text" } },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    { "color": "text", "value": null },
+                    { "color": "dark-red", "value": 1 }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "BOM age" },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [{ "type": "special", "options": { "match": "null", "result": { "text": "Never" } } }]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

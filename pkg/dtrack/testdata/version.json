@@ -1,0 +1,12 @@
+{
+  "framework": {
+    "uuid": "63e2f745-06e7-4516-aa0c-72158a2193b5",
+    "timestamp": "2026-11-18T22:14:59Z",
+    "version": "5.2.2",
+    "name": "Alpine"
+  },
+  "uuid": "11bd5be8-a931-4fff-ba03-c459d7e5221f",
+  "application": "Dependency-Track",
+  "timestamp": "2026-11-18T22:16:13Z",
+  "version": "5.2.2"
+}

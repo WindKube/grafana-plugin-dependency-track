@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: 'Dependency-Track'
+    uid: dependencytrack
+    type: 'windkube-dependencytrack-datasource'
+    access: proxy
+    url: 'http://dt-apiserver:8080'
+    isDefault: true
+    orgId: 1
+    version: 1
+    editable: true
+    jsonData:
+      uiUrl: 'http://localhost:8082'
+    secureJsonData:
+      apiKey: '$__file{/seed-out/api-key}'

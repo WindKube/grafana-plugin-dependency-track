@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "app",
+  "name": "Dependency-Track",
+  "id": "windkube-dependencytrack-app",
+  "info": {
+    "keywords": ["dependency-track", "owasp", "sbom", "vulnerabilities", "security", "supply chain"],
+    "description": "Explore and alert on OWASP Dependency-Track portfolio risk, findings and policy violations.",
+    "author": {
+      "name": "WindKube"
+    },
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      { "name": "Source code", "url": "https://github.com/WindKube/grafana-plugin-dependency-track" },
+      { "name": "License", "url": "https://github.com/WindKube/grafana-plugin-dependency-track/blob/main/LICENSE" }
+    ],
+    "screenshots": [
+      { "name": "Overview", "path": "img/screenshots/app-overview.png" },
+      { "name": "Project drill-down", "path": "img/screenshots/app-project.png" },
+      { "name": "Findings", "path": "img/screenshots/app-findings.png" },
+      { "name": "Policy violations", "path": "img/screenshots/app-violations.png" },
+      { "name": "SBOM freshness", "path": "img/screenshots/app-freshness.png" },
+      { "name": "Portfolio overview dashboard", "path": "img/screenshots/dashboard-portfolio-overview.png" },
+      { "name": "Data source configuration", "path": "img/screenshots/datasource-config.png" },
+      { "name": "Query editor", "path": "img/screenshots/query-editor.png" },
+      { "name": "Alert rule", "path": "img/screenshots/alert-rule.png" }
+    ],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "includes": [
+    { "type": "page", "name": "Overview", "path": "/a/%PLUGIN_ID%/overview", "addToNav": true, "defaultNav": true },
+    { "type": "page", "name": "Projects", "path": "/a/%PLUGIN_ID%/projects", "addToNav": true },
+    { "type": "page", "name": "Findings", "path": "/a/%PLUGIN_ID%/findings", "addToNav": true },
+    { "type": "page", "name": "Policy violations", "path": "/a/%PLUGIN_ID%/violations", "addToNav": true },
+    { "type": "page", "name": "SBOM freshness", "path": "/a/%PLUGIN_ID%/freshness", "addToNav": true },
+    { "type": "datasource", "name": "Dependency-Track", "path": "datasource/plugin.json" },
+    { "type": "dashboard", "name": "Portfolio overview", "path": "dashboards/portfolio-overview.json" },
+    { "type": "dashboard", "name": "Project", "path": "dashboards/project.json" },
+    { "type": "dashboard", "name": "Findings", "path": "dashboards/findings.json" },
+    { "type": "dashboard", "name": "Policy violations", "path": "dashboards/policy-violations.json" },
+    { "type": "dashboard", "name": "SBOM freshness", "path": "dashboards/sbom-freshness.json" }
+  ],
+  "dependencies": {
+    "grafanaDependency": ">=13.0.0",
+    "plugins": []
+  }
+}

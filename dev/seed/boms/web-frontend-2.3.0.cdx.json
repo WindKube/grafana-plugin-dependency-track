@@ -1,0 +1,100 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:6e354bd0-033b-5289-8929-1589726a8d59",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "web-frontend",
+      "version": "2.3.0",
+      "bom-ref": "web-frontend@2.3.0"
+    },
+    "properties": [
+      {
+        "name": "seed:tag",
+        "value": "frontend"
+      },
+      {
+        "name": "seed:tag",
+        "value": "team-web"
+      },
+      {
+        "name": "seed:tag",
+        "value": "production"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "react",
+      "version": "18.2.0",
+      "bom-ref": "pkg:npm/react@18.2.0",
+      "purl": "pkg:npm/react@18.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "react-dom",
+      "version": "18.2.0",
+      "bom-ref": "pkg:npm/react-dom@18.2.0",
+      "purl": "pkg:npm/react-dom@18.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "moment",
+      "version": "2.29.1",
+      "bom-ref": "pkg:npm/moment@2.29.1",
+      "purl": "pkg:npm/moment@2.29.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "marked",
+      "version": "0.3.6",
+      "bom-ref": "pkg:npm/marked@0.3.6",
+      "purl": "pkg:npm/marked@0.3.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "ua-parser-js",
+      "version": "0.7.28",
+      "bom-ref": "pkg:npm/ua-parser-js@0.7.28",
+      "purl": "pkg:npm/ua-parser-js@0.7.28",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+[
+  {
+    "component": {
+      "uuid": "124dec68-b89c-44a5-a5df-efcde93f5924",
+      "name": "lodash",
+      "version": "4.17.15",
+      "purl": "pkg:npm/lodash@4.17.15",
+      "project": "193995f2-2205-4b1b-ac0b-4e84e16eda35",
+      "hasOccurrences": false,
+      "projectName": "payments-api",
+      "projectVersion": "1.4.0",
+      "latestVersion": "4.18.1"
+    },
+    "vulnerability": {
+      "uuid": "03729a7c-a088-431b-989a-e8cbb5d0313c",
+      "source": "INTERNAL",
+      "vulnId": "INT-2020-0003",
+      "title": "INT-2020-0003 in pkg:npm/lodash@4.17.15",
+      "description": "Seeded vulnerability for development.",
+      "severity": "HIGH",
+      "severityRank": 1,
+      "cvssV3BaseScore": 7.4,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068630
+    },
+    "matrix": "193995f2-2205-4b1b-ac0b-4e84e16eda35:124dec68-b89c-44a5-a5df-efcde93f5924:03729a7c-a088-431b-989a-e8cbb5d0313c"
+  },
+  {
+    "component": {
+      "uuid": "a6858181-7354-4072-aaad-6c675b4d835c",
+      "name": "jsonwebtoken",
+      "version": "8.5.1",
+      "purl": "pkg:npm/jsonwebtoken@8.5.1",
+      "project": "193995f2-2205-4b1b-ac0b-4e84e16eda35",
+      "hasOccurrences": false,
+      "projectName": "payments-api",
+      "projectVersion": "1.4.0",
+      "latestVersion": "9.0.3"
+    },
+    "vulnerability": {
+      "uuid": "80106163-e2ad-48ee-a905-e9dcb325b913",
+      "source": "INTERNAL",
+      "vulnId": "INT-2022-0004",
+      "title": "INT-2022-0004 in pkg:npm/jsonwebtoken@8.5.1",
+      "description": "Seeded vulnerability for development.",
+      "severity": "HIGH",
+      "severityRank": 1,
+      "cvssV3BaseScore": 7.5,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068692
+    },
+    "matrix": "193995f2-2205-4b1b-ac0b-4e84e16eda35:a6858181-7354-4072-aaad-6c675b4d835c:80106163-e2ad-48ee-a905-e9dcb325b913"
+  },
+  {
+    "component": {
+      "uuid": "f74bf104-f81e-4c76-81c9-68fcf4ed0349",
+      "name": "axios",
+      "version": "0.21.1",
+      "purl": "pkg:npm/axios@0.21.1",
+      "project": "193995f2-2205-4b1b-ac0b-4e84e16eda35",
+      "hasOccurrences": false,
+      "projectName": "payments-api",
+      "projectVersion": "1.4.0",
+      "latestVersion": "1.21.1"
+    },
+    "vulnerability": {
+      "uuid": "fe79aee5-37c1-4647-ad0e-35bae7edb885",
+      "source": "INTERNAL",
+      "vulnId": "INT-2021-0005",
+      "title": "INT-2021-0005 in pkg:npm/axios@0.21.1",
+      "description": "Seeded vulnerability for development.",
+      "severity": "MEDIUM",
+      "severityRank": 2,
+      "cvssV3BaseScore": 6.5,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068752
+    },
+    "matrix": "193995f2-2205-4b1b-ac0b-4e84e16eda35:f74bf104-f81e-4c76-81c9-68fcf4ed0349:fe79aee5-37c1-4647-ad0e-35bae7edb885"
+  },
+  {
+    "component": {
+      "uuid": "db6ff4bc-1ada-483a-9c28-7d28341a45d7",
+      "name": "minimist",
+      "version": "1.2.5",
+      "purl": "pkg:npm/minimist@1.2.5",
+      "project": "193995f2-2205-4b1b-ac0b-4e84e16eda35",
+      "hasOccurrences": false,
+      "projectName": "payments-api",
+      "projectVersion": "1.4.0",
+      "latestVersion": "1.2.8"
+    },
+    "vulnerability": {
+      "uuid": "b092d055-9305-4170-b908-9c3a61d4b16d",
+      "source": "INTERNAL",
+      "vulnId": "INT-2021-0002",
+      "title": "INT-2021-0002 in pkg:npm/minimist@1.2.5",
+      "description": "Seeded vulnerability for development.",
+      "severity": "CRITICAL",
+      "severityRank": 0,
+      "cvssV3BaseScore": 9.8,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068566
+    },
+    "matrix": "193995f2-2205-4b1b-ac0b-4e84e16eda35:db6ff4bc-1ada-483a-9c28-7d28341a45d7:b092d055-9305-4170-b908-9c3a61d4b16d"
+  }
+]

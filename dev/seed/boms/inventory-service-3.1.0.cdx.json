@@ -1,0 +1,105 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:6033f309-1c93-558f-83ff-7ca2d59c0ca5",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "inventory-service",
+      "version": "3.1.0",
+      "bom-ref": "inventory-service@3.1.0"
+    },
+    "properties": [
+      {
+        "name": "seed:tag",
+        "value": "backend"
+      },
+      {
+        "name": "seed:tag",
+        "value": "team-logistics"
+      },
+      {
+        "name": "seed:tag",
+        "value": "staging"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "group": "org.apache.logging.log4j",
+      "name": "log4j-core",
+      "version": "2.14.1",
+      "bom-ref": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "purl": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "group": "com.fasterxml.jackson.core",
+      "name": "jackson-databind",
+      "version": "2.9.10.1",
+      "bom-ref": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.9.10.1",
+      "purl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.9.10.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "group": "org.springframework",
+      "name": "spring-web",
+      "version": "5.3.17",
+      "bom-ref": "pkg:maven/org.springframework/spring-web@5.3.17",
+      "purl": "pkg:maven/org.springframework/spring-web@5.3.17",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "group": "org.yaml",
+      "name": "snakeyaml",
+      "version": "1.29",
+      "bom-ref": "pkg:maven/org.yaml/snakeyaml@1.29",
+      "purl": "pkg:maven/org.yaml/snakeyaml@1.29",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "group": "com.h2database",
+      "name": "h2",
+      "version": "1.4.199",
+      "bom-ref": "pkg:maven/com.h2database/h2@1.4.199",
+      "purl": "pkg:maven/com.h2database/h2@1.4.199",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+# Example Grafana alert rules for the Dependency-Track data source.
+# Replace datasourceUid with the UID of your Dependency-Track data source.
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: dependency-track
+    folder: Dependency-Track
+    interval: 5m
+    rules:
+      - uid: dt-critical-findings
+        title: Critical vulnerabilities in project
+        condition: C
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        labels:
+          source: dependency-track
+        annotations:
+          summary: '{{ $labels.project }} {{ $labels.version }} has {{ $values.B }} critical vulnerabilities'
+        data:
+          - refId: A
+            datasourceUid: dependencytrack
+            relativeTimeRange: { from: 600, to: 0 }
+            model:
+              refId: A
+              queryType: projectMetrics
+              mode: current
+              metrics: [critical]
+              projects: { mode: all, onlyLatest: true }
+          - refId: B
+            datasourceUid: __expr__
+            model: { refId: B, type: reduce, expression: A, reducer: last }
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions: [{ evaluator: { type: gt, params: [0] } }]
+
+      - uid: dt-known-exploited
+        title: Known exploited vulnerability in portfolio
+        condition: C
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        labels:
+          source: dependency-track
+        annotations:
+          summary: '{{ $values.B }} findings are listed in the CISA KEV catalog'
+        data:
+          - refId: A
+            datasourceUid: dependencytrack
+            relativeTimeRange: { from: 600, to: 0 }
+            model: { refId: A, queryType: portfolioMetrics, mode: current, metrics: [kev] }
+          - refId: B
+            datasourceUid: __expr__
+            model: { refId: B, type: reduce, expression: A, reducer: last }
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions: [{ evaluator: { type: gt, params: [0] } }]
+
+      - uid: dt-policy-fail
+        title: Failing policy violations
+        condition: C
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        labels:
+          source: dependency-track
+        annotations:
+          summary: '{{ $labels.project }} {{ $labels.version }} violates {{ $labels.policy }} ({{ $values.B }} components)'
+        data:
+          - refId: A
+            datasourceUid: dependencytrack
+            relativeTimeRange: { from: 600, to: 0 }
+            model:
+              refId: A
+              queryType: violations
+              format: count
+              violations: { states: [FAIL], groupByPolicy: true }
+              projects: { mode: all, onlyLatest: true }
+          - refId: B
+            datasourceUid: __expr__
+            model: { refId: B, type: reduce, expression: A, reducer: last }
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions: [{ evaluator: { type: gt, params: [0] } }]
+
+      - uid: dt-stale-sbom
+        title: SBOM not updated in 30 days
+        condition: C
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        labels:
+          source: dependency-track
+        annotations:
+          summary: '{{ $labels.project }} {{ $labels.version }} has no SBOM upload in the last 30 days'
+        data:
+          - refId: A
+            datasourceUid: dependencytrack
+            relativeTimeRange: { from: 600, to: 0 }
+            model:
+              refId: A
+              queryType: projects
+              format: bomAge
+              projects: { mode: all, onlyLatest: true }
+          - refId: B
+            datasourceUid: __expr__
+            model: { refId: B, type: reduce, expression: A, reducer: last }
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions: [{ evaluator: { type: gt, params: [2592000] } }]

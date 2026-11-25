@@ -1,0 +1,200 @@
+[
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "web-frontend",
+      "version": "2.3.0",
+      "classifier": "APPLICATION",
+      "uuid": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+      "tags": [
+        {
+          "name": "production"
+        },
+        {
+          "name": "team-web"
+        },
+        {
+          "name": "frontend"
+        }
+      ],
+      "lastBomImport": 1795614969189,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 9.0,
+      "lastVulnerabilityAnalysis": 1795614986099,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "name": "marked",
+      "version": "0.3.6",
+      "classifier": "LIBRARY",
+      "purl": "pkg:npm/marked@0.3.6",
+      "purlCoordinates": "pkg:npm/marked@0.3.6",
+      "resolvedLicense": {
+        "uuid": "b5ec78f1-77fa-4f5a-a5cf-b4c6d596ab46",
+        "name": "MIT License",
+        "licenseId": "MIT",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "web-frontend",
+        "version": "2.3.0",
+        "classifier": "APPLICATION",
+        "uuid": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+        "tags": [
+          {
+            "name": "production"
+          },
+          {
+            "name": "team-web"
+          },
+          {
+            "name": "frontend"
+          }
+        ],
+        "lastBomImport": 1795614969189,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 9.0,
+        "lastVulnerabilityAnalysis": 1795614986099,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 3.0,
+      "uuid": "249332eb-2aa1-4493-b561-bccac66da0fe",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Banned packages",
+        "operator": "ANY",
+        "violationState": "FAIL",
+        "uuid": "d569f0f5-d4cb-4233-87bd-007251fd865a",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:npm/(moment|marked)@.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "ad52a2c9-6801-42d4-9eba-26de8c144d29"
+    },
+    "timestamp": 1795611067613,
+    "analysis": {
+      "analysisState": "APPROVED",
+      "analysisComments": [
+        {
+          "timestamp": 1795615095835,
+          "comment": "NOT_SET → APPROVED",
+          "commenter": "admin"
+        },
+        {
+          "timestamp": 1795615095835,
+          "comment": "Accepted until the date-fns migration lands.",
+          "commenter": "admin"
+        }
+      ],
+      "isSuppressed": false
+    },
+    "uuid": "4b049e54-884b-4c66-b6c2-b898fcdabcff"
+  },
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "web-frontend",
+      "version": "2.3.0",
+      "classifier": "APPLICATION",
+      "uuid": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+      "tags": [
+        {
+          "name": "production"
+        },
+        {
+          "name": "team-web"
+        },
+        {
+          "name": "frontend"
+        }
+      ],
+      "lastBomImport": 1795614969189,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 9.0,
+      "lastVulnerabilityAnalysis": 1795614986099,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "name": "moment",
+      "version": "2.29.1",
+      "classifier": "LIBRARY",
+      "purl": "pkg:npm/moment@2.29.1",
+      "purlCoordinates": "pkg:npm/moment@2.29.1",
+      "resolvedLicense": {
+        "uuid": "b5ec78f1-77fa-4f5a-a5cf-b4c6d596ab46",
+        "name": "MIT License",
+        "licenseId": "MIT",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "web-frontend",
+        "version": "2.3.0",
+        "classifier": "APPLICATION",
+        "uuid": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+        "tags": [
+          {
+            "name": "production"
+          },
+          {
+            "name": "team-web"
+          },
+          {
+            "name": "frontend"
+          }
+        ],
+        "lastBomImport": 1795614969189,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 9.0,
+        "lastVulnerabilityAnalysis": 1795614986099,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 1.0,
+      "uuid": "ace8509d-dfac-4123-84be-a1b5092ec031",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Banned packages",
+        "operator": "ANY",
+        "violationState": "FAIL",
+        "uuid": "d569f0f5-d4cb-4233-87bd-007251fd865a",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:npm/(moment|marked)@.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "ad52a2c9-6801-42d4-9eba-26de8c144d29"
+    },
+    "timestamp": 1795611067613,
+    "uuid": "21f79b6d-1be9-4f68-92fb-888a8aeffb1f"
+  }
+]

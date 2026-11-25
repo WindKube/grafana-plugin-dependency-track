@@ -1,0 +1,294 @@
+[
+  {
+    "uuid": "b23f2e59-e361-4ed8-bb51-e566275d7cd9",
+    "name": "inventory-service",
+    "version": "3.1.0",
+    "classifier": "APPLICATION",
+    "isLatest": true,
+    "lastBomImport": 1795611053247,
+    "lastBomImportFormat": "CycloneDX 1.6",
+    "lastVulnerabilityAnalysis": 1795611070423,
+    "lastInheritedRiskScore": 23.0,
+    "authors": [],
+    "tags": [
+      {
+        "name": "team-logistics"
+      },
+      {
+        "name": "staging"
+      },
+      {
+        "name": "backend"
+      }
+    ],
+    "metadata": {},
+    "metrics": {
+      "critical": 2,
+      "high": 0,
+      "medium": 1,
+      "low": 0,
+      "unassigned": 0,
+      "kev": 0,
+      "vulnerabilities": 3,
+      "vulnerableComponents": 3,
+      "components": 5,
+      "suppressed": 0,
+      "findingsTotal": 3,
+      "findingsAudited": 0,
+      "findingsUnaudited": 3,
+      "inheritedRiskScore": 23.0,
+      "policyViolationsFail": 0,
+      "policyViolationsWarn": 1,
+      "policyViolationsInfo": 0,
+      "policyViolationsTotal": 1,
+      "policyViolationsAudited": 0,
+      "policyViolationsUnaudited": 1,
+      "policyViolationsSecurityTotal": 0,
+      "policyViolationsSecurityAudited": 0,
+      "policyViolationsSecurityUnaudited": 0,
+      "policyViolationsLicenseTotal": 0,
+      "policyViolationsLicenseAudited": 0,
+      "policyViolationsLicenseUnaudited": 0,
+      "policyViolationsOperationalTotal": 1,
+      "policyViolationsOperationalAudited": 0,
+      "policyViolationsOperationalUnaudited": 1,
+      "firstOccurrence": 1795611071707,
+      "lastOccurrence": 1795611071707
+    },
+    "hasChildren": false,
+    "active": true
+  },
+  {
+    "uuid": "193995f2-2205-4b1b-ac0b-4e84e16eda35",
+    "name": "payments-api",
+    "version": "1.4.0",
+    "classifier": "APPLICATION",
+    "isLatest": false,
+    "lastBomImport": 1795611056235,
+    "lastBomImportFormat": "CycloneDX 1.6",
+    "lastVulnerabilityAnalysis": 1795611070620,
+    "lastInheritedRiskScore": 23.0,
+    "authors": [],
+    "tags": [
+      {
+        "name": "backend"
+      },
+      {
+        "name": "production"
+      },
+      {
+        "name": "team-payments"
+      }
+    ],
+    "metadata": {},
+    "metrics": {
+      "critical": 1,
+      "high": 2,
+      "medium": 1,
+      "low": 0,
+      "unassigned": 0,
+      "kev": 0,
+      "vulnerabilities": 4,
+      "vulnerableComponents": 4,
+      "components": 6,
+      "suppressed": 0,
+      "findingsTotal": 4,
+      "findingsAudited": 0,
+      "findingsUnaudited": 4,
+      "inheritedRiskScore": 23.0,
+      "policyViolationsFail": 0,
+      "policyViolationsWarn": 0,
+      "policyViolationsInfo": 0,
+      "policyViolationsTotal": 0,
+      "policyViolationsAudited": 0,
+      "policyViolationsUnaudited": 0,
+      "policyViolationsSecurityTotal": 0,
+      "policyViolationsSecurityAudited": 0,
+      "policyViolationsSecurityUnaudited": 0,
+      "policyViolationsLicenseTotal": 0,
+      "policyViolationsLicenseAudited": 0,
+      "policyViolationsLicenseUnaudited": 0,
+      "policyViolationsOperationalTotal": 0,
+      "policyViolationsOperationalAudited": 0,
+      "policyViolationsOperationalUnaudited": 0,
+      "firstOccurrence": 1795611072007,
+      "lastOccurrence": 1795611072007
+    },
+    "hasChildren": false,
+    "active": true
+  },
+  {
+    "uuid": "f1a8ce77-8d29-4652-a3f7-75b22c060bdf",
+    "name": "payments-api",
+    "version": "1.5.0",
+    "classifier": "APPLICATION",
+    "isLatest": true,
+    "lastBomImport": 1795611059394,
+    "lastBomImportFormat": "CycloneDX 1.6",
+    "lastVulnerabilityAnalysis": 1795611070610,
+    "lastInheritedRiskScore": 0.0,
+    "authors": [],
+    "tags": [
+      {
+        "name": "backend"
+      },
+      {
+        "name": "production"
+      },
+      {
+        "name": "team-payments"
+      }
+    ],
+    "metadata": {},
+    "metrics": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "unassigned": 0,
+      "kev": 0,
+      "vulnerabilities": 0,
+      "vulnerableComponents": 0,
+      "components": 5,
+      "suppressed": 0,
+      "findingsTotal": 0,
+      "findingsAudited": 0,
+      "findingsUnaudited": 0,
+      "inheritedRiskScore": 0.0,
+      "policyViolationsFail": 0,
+      "policyViolationsWarn": 0,
+      "policyViolationsInfo": 0,
+      "policyViolationsTotal": 0,
+      "policyViolationsAudited": 0,
+      "policyViolationsUnaudited": 0,
+      "policyViolationsSecurityTotal": 0,
+      "policyViolationsSecurityAudited": 0,
+      "policyViolationsSecurityUnaudited": 0,
+      "policyViolationsLicenseTotal": 0,
+      "policyViolationsLicenseAudited": 0,
+      "policyViolationsLicenseUnaudited": 0,
+      "policyViolationsOperationalTotal": 0,
+      "policyViolationsOperationalAudited": 0,
+      "policyViolationsOperationalUnaudited": 0,
+      "firstOccurrence": 1795611061686,
+      "lastOccurrence": 1795611061686
+    },
+    "hasChildren": false,
+    "active": true
+  },
+  {
+    "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+    "name": "report-worker",
+    "version": "0.9.2",
+    "classifier": "APPLICATION",
+    "isLatest": true,
+    "lastBomImport": 1795611062413,
+    "lastBomImportFormat": "CycloneDX 1.6",
+    "lastVulnerabilityAnalysis": 1795611070621,
+    "lastInheritedRiskScore": 9.0,
+    "authors": [],
+    "tags": [
+      {
+        "name": "team-logistics"
+      },
+      {
+        "name": "batch"
+      }
+    ],
+    "metadata": {},
+    "metrics": {
+      "critical": 0,
+      "high": 1,
+      "medium": 1,
+      "low": 1,
+      "unassigned": 0,
+      "kev": 0,
+      "vulnerabilities": 3,
+      "vulnerableComponents": 3,
+      "components": 5,
+      "suppressed": 0,
+      "findingsTotal": 3,
+      "findingsAudited": 0,
+      "findingsUnaudited": 3,
+      "inheritedRiskScore": 9.0,
+      "policyViolationsFail": 0,
+      "policyViolationsWarn": 0,
+      "policyViolationsInfo": 5,
+      "policyViolationsTotal": 5,
+      "policyViolationsAudited": 0,
+      "policyViolationsUnaudited": 5,
+      "policyViolationsSecurityTotal": 0,
+      "policyViolationsSecurityAudited": 0,
+      "policyViolationsSecurityUnaudited": 0,
+      "policyViolationsLicenseTotal": 0,
+      "policyViolationsLicenseAudited": 0,
+      "policyViolationsLicenseUnaudited": 0,
+      "policyViolationsOperationalTotal": 5,
+      "policyViolationsOperationalAudited": 0,
+      "policyViolationsOperationalUnaudited": 5,
+      "firstOccurrence": 1795611071908,
+      "lastOccurrence": 1795611071908
+    },
+    "hasChildren": false,
+    "active": true
+  },
+  {
+    "uuid": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+    "name": "web-frontend",
+    "version": "2.3.0",
+    "classifier": "APPLICATION",
+    "isLatest": true,
+    "lastBomImport": 1795611065613,
+    "lastBomImportFormat": "CycloneDX 1.6",
+    "lastVulnerabilityAnalysis": 1795611070618,
+    "lastInheritedRiskScore": 9.0,
+    "authors": [],
+    "tags": [
+      {
+        "name": "production"
+      },
+      {
+        "name": "team-web"
+      },
+      {
+        "name": "frontend"
+      }
+    ],
+    "metadata": {},
+    "metrics": {
+      "critical": 0,
+      "high": 1,
+      "medium": 1,
+      "low": 1,
+      "unassigned": 0,
+      "kev": 0,
+      "vulnerabilities": 3,
+      "vulnerableComponents": 3,
+      "components": 5,
+      "suppressed": 0,
+      "findingsTotal": 3,
+      "findingsAudited": 0,
+      "findingsUnaudited": 3,
+      "inheritedRiskScore": 9.0,
+      "policyViolationsFail": 2,
+      "policyViolationsWarn": 0,
+      "policyViolationsInfo": 0,
+      "policyViolationsTotal": 2,
+      "policyViolationsAudited": 0,
+      "policyViolationsUnaudited": 2,
+      "policyViolationsSecurityTotal": 0,
+      "policyViolationsSecurityAudited": 0,
+      "policyViolationsSecurityUnaudited": 0,
+      "policyViolationsLicenseTotal": 0,
+      "policyViolationsLicenseAudited": 0,
+      "policyViolationsLicenseUnaudited": 0,
+      "policyViolationsOperationalTotal": 2,
+      "policyViolationsOperationalAudited": 0,
+      "policyViolationsOperationalUnaudited": 2,
+      "firstOccurrence": 1795611071908,
+      "lastOccurrence": 1795611071908
+    },
+    "hasChildren": false,
+    "active": true
+  }
+]

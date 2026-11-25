@@ -1,0 +1,120 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommitsDisabled",
+    ":dependencyDashboard",
+    "helpers:pinGitHubActionDigestsToSemver"
+  ],
+  "enabledManagers": [
+    "npm",
+    "gomod",
+    "github-actions",
+    "docker-compose",
+    "nvm",
+    "terraform",
+    "mise",
+    "asdf",
+    "custom.regex"
+  ],
+  "ignorePaths": [".config/**"],
+  "timezone": "Europe/Warsaw",
+  "schedule": ["before 6am on monday"],
+  "prConcurrentLimit": 10,
+  "prHourlyLimit": 4,
+  "platformAutomerge": false,
+  "postUpdateOptions": ["gomodTidy", "pnpmDedupe"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"]
+  },
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "schedule": ["at any time"],
+    "minimumReleaseAge": null
+  },
+  "customManagers": [
+    {
+      "description": "Versions in workflows annotated with `# renovate: datasource=... depName=...`",
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.ya?ml$/"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+[\\w-]+:\\s*'?(?<currentValue>[^'\\s]+)'?"
+      ]
+    },
+    {
+      "description": "Version defaults in `${VAR:-x.y.z}` image tags, e.g. Dependency-Track",
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)docker-compose\\.ya?ml$/"],
+      "matchStrings": ["image:\\s*(?<depName>[\\w./-]+):\\$\\{\\w+:-(?<currentValue>[^}]+)\\}"],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["npm"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchCurrentVersion": "!/^0/",
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "dev dependencies non-major",
+      "automerge": true
+    },
+    {
+      "description": "Grafana packages are released together",
+      "matchPackageNames": ["@grafana/data", "@grafana/i18n", "@grafana/runtime", "@grafana/schema", "@grafana/ui"],
+      "groupName": "grafana packages"
+    },
+    {
+      "description": "The plugin validator rejects SDKs older than 5 months, so keep it current",
+      "matchManagers": ["gomod"],
+      "matchPackageNames": ["github.com/grafana/grafana-plugin-sdk-go"],
+      "groupName": "grafana-plugin-sdk-go",
+      "schedule": ["at any time"],
+      "prPriority": 10
+    },
+    {
+      "matchDatasources": ["golang-version"],
+      "rangeStrategy": "bump",
+      "groupName": "go toolchain"
+    },
+    {
+      "matchPackageNames": ["node", "@types/node"],
+      "groupName": "node"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["digest", "pinDigest", "patch"],
+      "groupName": "github actions digests and patches",
+      "automerge": true
+    },
+    {
+      "description": "The config validator in CI releases daily; a monthly bump is enough",
+      "matchManagers": ["custom.regex"],
+      "matchPackageNames": ["renovate"],
+      "extends": ["schedule:monthly"]
+    },
+    {
+      "matchPackageNames": ["dependencytrack/**"],
+      "groupName": "dependency-track"
+    },
+    {
+      "description": "A new Postgres major cannot read the existing dev volume",
+      "matchPackageNames": ["postgres"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchJsonata": ["isVulnerabilityAlert = true"],
+      "prPriority": 20
+    }
+  ]
+}

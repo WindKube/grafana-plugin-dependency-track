@@ -1,0 +1,8 @@
+version: '2'
+formatters:
+  enable:
+    - gofmt
+linters:
+  exclusions:
+    paths:
+      - node_modules

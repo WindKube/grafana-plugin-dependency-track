@@ -1,0 +1,434 @@
+[
+  {
+    "component": {
+      "uuid": "5a19c03f-b756-41bf-998a-3eee921a002c",
+      "name": "log4j-core",
+      "group": "org.apache.logging.log4j",
+      "version": "2.14.1",
+      "purl": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "project": "b23f2e59-e361-4ed8-bb51-e566275d7cd9",
+      "hasOccurrences": false,
+      "projectName": "inventory-service",
+      "projectVersion": "3.1.0",
+      "latestVersion": "2.26.1"
+    },
+    "vulnerability": {
+      "uuid": "f8ee133b-250c-40a1-b628-f58054f6e112",
+      "source": "INTERNAL",
+      "vulnId": "INT-2021-0001",
+      "title": "INT-2021-0001 in pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "description": "Seeded vulnerability for development.",
+      "severity": "CRITICAL",
+      "severityRank": 0,
+      "cvssV3BaseScore": 10.0,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068507
+    },
+    "matrix": "b23f2e59-e361-4ed8-bb51-e566275d7cd9:5a19c03f-b756-41bf-998a-3eee921a002c:f8ee133b-250c-40a1-b628-f58054f6e112"
+  },
+  {
+    "component": {
+      "uuid": "3083e810-54b0-4709-9610-0f3b5eea90a1",
+      "name": "jackson-databind",
+      "group": "com.fasterxml.jackson.core",
+      "version": "2.9.10.1",
+      "purl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.9.10.1",
+      "project": "b23f2e59-e361-4ed8-bb51-e566275d7cd9",
+      "hasOccurrences": false,
+      "projectName": "inventory-service",
+      "projectVersion": "3.1.0",
+      "latestVersion": "2.23.0"
+    },
+    "vulnerability": {
+      "uuid": "211f3895-6205-4ad7-b5f5-9c59d77737a5",
+      "source": "INTERNAL",
+      "vulnId": "INT-2020-0008",
+      "title": "INT-2020-0008 in pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.9.10.1",
+      "description": "Seeded vulnerability for development.",
+      "severity": "CRITICAL",
+      "severityRank": 0,
+      "cvssV3BaseScore": 9.8,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068904
+    },
+    "matrix": "b23f2e59-e361-4ed8-bb51-e566275d7cd9:3083e810-54b0-4709-9610-0f3b5eea90a1:211f3895-6205-4ad7-b5f5-9c59d77737a5"
+  },
+  {
+    "component": {
+      "uuid": "8d6f254d-4e82-4196-bab3-ce3322aa4f90",
+      "name": "snakeyaml",
+      "group": "org.yaml",
+      "version": "1.29",
+      "purl": "pkg:maven/org.yaml/snakeyaml@1.29",
+      "project": "b23f2e59-e361-4ed8-bb51-e566275d7cd9",
+      "hasOccurrences": false,
+      "projectName": "inventory-service",
+      "projectVersion": "3.1.0",
+      "latestVersion": "2.7"
+    },
+    "vulnerability": {
+      "uuid": "0b20551a-0f6d-48a1-82b2-ca00b59e7d34",
+      "source": "INTERNAL",
+      "vulnId": "INT-2022-0009",
+      "title": "INT-2022-0009 in pkg:maven/org.yaml/snakeyaml@1.29",
+      "description": "Seeded vulnerability for development.",
+      "severity": "MEDIUM",
+      "severityRank": 2,
+      "cvssV3BaseScore": 6.5,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068956
+    },
+    "matrix": "b23f2e59-e361-4ed8-bb51-e566275d7cd9:8d6f254d-4e82-4196-bab3-ce3322aa4f90:0b20551a-0f6d-48a1-82b2-ca00b59e7d34"
+  },
+  {
+    "component": {
+      "uuid": "124dec68-b89c-44a5-a5df-efcde93f5924",
+      "name": "lodash",
+      "version": "4.17.15",
+      "purl": "pkg:npm/lodash@4.17.15",
+      "project": "193995f2-2205-4b1b-ac0b-4e84e16eda35",
+      "hasOccurrences": false,
+      "projectName": "payments-api",
+      "projectVersion": "1.4.0",
+      "latestVersion": "4.18.1"
+    },
+    "vulnerability": {
+      "uuid": "03729a7c-a088-431b-989a-e8cbb5d0313c",
+      "source": "INTERNAL",
+      "vulnId": "INT-2020-0003",
+      "title": "INT-2020-0003 in pkg:npm/lodash@4.17.15",
+      "description": "Seeded vulnerability for development.",
+      "severity": "HIGH",
+      "severityRank": 1,
+      "cvssV3BaseScore": 7.4,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068630
+    },
+    "matrix": "193995f2-2205-4b1b-ac0b-4e84e16eda35:124dec68-b89c-44a5-a5df-efcde93f5924:03729a7c-a088-431b-989a-e8cbb5d0313c"
+  },
+  {
+    "component": {
+      "uuid": "a6858181-7354-4072-aaad-6c675b4d835c",
+      "name": "jsonwebtoken",
+      "version": "8.5.1",
+      "purl": "pkg:npm/jsonwebtoken@8.5.1",
+      "project": "193995f2-2205-4b1b-ac0b-4e84e16eda35",
+      "hasOccurrences": false,
+      "projectName": "payments-api",
+      "projectVersion": "1.4.0",
+      "latestVersion": "9.0.3"
+    },
+    "vulnerability": {
+      "uuid": "80106163-e2ad-48ee-a905-e9dcb325b913",
+      "source": "INTERNAL",
+      "vulnId": "INT-2022-0004",
+      "title": "INT-2022-0004 in pkg:npm/jsonwebtoken@8.5.1",
+      "description": "Seeded vulnerability for development.",
+      "severity": "HIGH",
+      "severityRank": 1,
+      "cvssV3BaseScore": 7.5,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068692
+    },
+    "matrix": "193995f2-2205-4b1b-ac0b-4e84e16eda35:a6858181-7354-4072-aaad-6c675b4d835c:80106163-e2ad-48ee-a905-e9dcb325b913"
+  },
+  {
+    "component": {
+      "uuid": "f74bf104-f81e-4c76-81c9-68fcf4ed0349",
+      "name": "axios",
+      "version": "0.21.1",
+      "purl": "pkg:npm/axios@0.21.1",
+      "project": "193995f2-2205-4b1b-ac0b-4e84e16eda35",
+      "hasOccurrences": false,
+      "projectName": "payments-api",
+      "projectVersion": "1.4.0",
+      "latestVersion": "1.21.1"
+    },
+    "vulnerability": {
+      "uuid": "fe79aee5-37c1-4647-ad0e-35bae7edb885",
+      "source": "INTERNAL",
+      "vulnId": "INT-2021-0005",
+      "title": "INT-2021-0005 in pkg:npm/axios@0.21.1",
+      "description": "Seeded vulnerability for development.",
+      "severity": "MEDIUM",
+      "severityRank": 2,
+      "cvssV3BaseScore": 6.5,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068752
+    },
+    "matrix": "193995f2-2205-4b1b-ac0b-4e84e16eda35:f74bf104-f81e-4c76-81c9-68fcf4ed0349:fe79aee5-37c1-4647-ad0e-35bae7edb885"
+  },
+  {
+    "component": {
+      "uuid": "db6ff4bc-1ada-483a-9c28-7d28341a45d7",
+      "name": "minimist",
+      "version": "1.2.5",
+      "purl": "pkg:npm/minimist@1.2.5",
+      "project": "193995f2-2205-4b1b-ac0b-4e84e16eda35",
+      "hasOccurrences": false,
+      "projectName": "payments-api",
+      "projectVersion": "1.4.0",
+      "latestVersion": "1.2.8"
+    },
+    "vulnerability": {
+      "uuid": "b092d055-9305-4170-b908-9c3a61d4b16d",
+      "source": "INTERNAL",
+      "vulnId": "INT-2021-0002",
+      "title": "INT-2021-0002 in pkg:npm/minimist@1.2.5",
+      "description": "Seeded vulnerability for development.",
+      "severity": "CRITICAL",
+      "severityRank": 0,
+      "cvssV3BaseScore": 9.8,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068566
+    },
+    "matrix": "193995f2-2205-4b1b-ac0b-4e84e16eda35:db6ff4bc-1ada-483a-9c28-7d28341a45d7:b092d055-9305-4170-b908-9c3a61d4b16d"
+  },
+  {
+    "component": {
+      "uuid": "474ff769-7707-4acd-838e-2a2a37dac838",
+      "name": "requests",
+      "version": "2.25.1",
+      "purl": "pkg:pypi/requests@2.25.1",
+      "project": "79a9067d-9905-405b-8e42-cd980db549e9",
+      "hasOccurrences": false,
+      "projectName": "report-worker",
+      "projectVersion": "0.9.2",
+      "latestVersion": "2.34.2"
+    },
+    "vulnerability": {
+      "uuid": "14178d44-4deb-465a-b005-90a34dc7bb81",
+      "source": "INTERNAL",
+      "vulnId": "INT-2023-0011",
+      "title": "INT-2023-0011 in pkg:pypi/requests@2.25.1",
+      "description": "Seeded vulnerability for development.",
+      "severity": "MEDIUM",
+      "severityRank": 2,
+      "cvssV3BaseScore": 5.4,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611069061
+    },
+    "matrix": "79a9067d-9905-405b-8e42-cd980db549e9:474ff769-7707-4acd-838e-2a2a37dac838:14178d44-4deb-465a-b005-90a34dc7bb81"
+  },
+  {
+    "component": {
+      "uuid": "bb0545f2-2f34-4bce-b25e-e7b90f425371",
+      "name": "pyyaml",
+      "version": "5.3.1",
+      "purl": "pkg:pypi/pyyaml@5.3.1",
+      "project": "79a9067d-9905-405b-8e42-cd980db549e9",
+      "hasOccurrences": false,
+      "projectName": "report-worker",
+      "projectVersion": "0.9.2",
+      "latestVersion": "6.0.4"
+    },
+    "vulnerability": {
+      "uuid": "c8954797-5fc9-4133-8e23-58cf44f464cc",
+      "source": "INTERNAL",
+      "vulnId": "INT-2021-0010",
+      "title": "INT-2021-0010 in pkg:pypi/pyyaml@5.3.1",
+      "description": "Seeded vulnerability for development.",
+      "severity": "HIGH",
+      "severityRank": 1,
+      "cvssV3BaseScore": 8.8,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611069012
+    },
+    "matrix": "79a9067d-9905-405b-8e42-cd980db549e9:bb0545f2-2f34-4bce-b25e-e7b90f425371:c8954797-5fc9-4133-8e23-58cf44f464cc"
+  },
+  {
+    "component": {
+      "uuid": "ec413271-8e68-40dc-83ac-8717393c44a8",
+      "name": "urllib3",
+      "version": "1.26.4",
+      "purl": "pkg:pypi/urllib3@1.26.4",
+      "project": "79a9067d-9905-405b-8e42-cd980db549e9",
+      "hasOccurrences": false,
+      "projectName": "report-worker",
+      "projectVersion": "0.9.2",
+      "latestVersion": "2.8.0"
+    },
+    "vulnerability": {
+      "uuid": "f8102975-330a-4a93-978b-4113b2c08e44",
+      "source": "INTERNAL",
+      "vulnId": "INT-2023-0012",
+      "title": "INT-2023-0012 in pkg:pypi/urllib3@1.26.4",
+      "description": "Seeded vulnerability for development.",
+      "severity": "LOW",
+      "severityRank": 3,
+      "cvssV3BaseScore": 3.7,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611069122
+    },
+    "matrix": "79a9067d-9905-405b-8e42-cd980db549e9:ec413271-8e68-40dc-83ac-8717393c44a8:f8102975-330a-4a93-978b-4113b2c08e44"
+  },
+  {
+    "component": {
+      "uuid": "ace8509d-dfac-4123-84be-a1b5092ec031",
+      "name": "moment",
+      "version": "2.29.1",
+      "purl": "pkg:npm/moment@2.29.1",
+      "project": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+      "hasOccurrences": false,
+      "projectName": "web-frontend",
+      "projectVersion": "2.3.0",
+      "latestVersion": "2.31.0"
+    },
+    "vulnerability": {
+      "uuid": "cb1df4ae-67c3-4704-abec-d42034bd3f67",
+      "source": "INTERNAL",
+      "vulnId": "INT-2022-0013",
+      "title": "INT-2022-0013 in pkg:npm/moment@2.29.1",
+      "description": "Seeded vulnerability for development.",
+      "severity": "LOW",
+      "severityRank": 3,
+      "cvssV3BaseScore": 2.0,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611069177
+    },
+    "matrix": "51abccf1-b95d-49c6-b791-32fce5fd1ffe:ace8509d-dfac-4123-84be-a1b5092ec031:cb1df4ae-67c3-4704-abec-d42034bd3f67"
+  },
+  {
+    "component": {
+      "uuid": "249332eb-2aa1-4493-b561-bccac66da0fe",
+      "name": "marked",
+      "version": "0.3.6",
+      "purl": "pkg:npm/marked@0.3.6",
+      "project": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+      "hasOccurrences": false,
+      "projectName": "web-frontend",
+      "projectVersion": "2.3.0",
+      "latestVersion": "18.3.0"
+    },
+    "vulnerability": {
+      "uuid": "46ae5c9f-af7a-4cff-bc7b-ae5fe1f9b79a",
+      "source": "INTERNAL",
+      "vulnId": "INT-2017-0006",
+      "title": "INT-2017-0006 in pkg:npm/marked@0.3.6",
+      "description": "Seeded vulnerability for development.",
+      "severity": "MEDIUM",
+      "severityRank": 2,
+      "cvssV3BaseScore": 5.3,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068805
+    },
+    "matrix": "51abccf1-b95d-49c6-b791-32fce5fd1ffe:249332eb-2aa1-4493-b561-bccac66da0fe:46ae5c9f-af7a-4cff-bc7b-ae5fe1f9b79a"
+  },
+  {
+    "component": {
+      "uuid": "d64aad72-02ce-412a-8f64-26cfc031de5b",
+      "name": "ua-parser-js",
+      "version": "0.7.28",
+      "purl": "pkg:npm/ua-parser-js@0.7.28",
+      "project": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+      "hasOccurrences": false,
+      "projectName": "web-frontend",
+      "projectVersion": "2.3.0",
+      "latestVersion": "2.0.10"
+    },
+    "vulnerability": {
+      "uuid": "7e03685a-d88e-4d87-8730-3a3562538671",
+      "source": "INTERNAL",
+      "vulnId": "INT-2021-0007",
+      "title": "INT-2021-0007 in pkg:npm/ua-parser-js@0.7.28",
+      "description": "Seeded vulnerability for development.",
+      "severity": "HIGH",
+      "severityRank": 1,
+      "cvssV3BaseScore": 7.5,
+      "isKev": false,
+      "aliases": []
+    },
+    "analysis": {
+      "isSuppressed": false
+    },
+    "attribution": {
+      "analyzerIdentity": "none",
+      "attributedOn": 1795611068852
+    },
+    "matrix": "51abccf1-b95d-49c6-b791-32fce5fd1ffe:d64aad72-02ce-412a-8f64-26cfc031de5b:7e03685a-d88e-4d87-8730-3a3562538671"
+  }
+]

@@ -1,0 +1,100 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:f1ef69f9-55b9-5ab4-9a2b-0f00bd533928",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "payments-api",
+      "version": "1.5.0",
+      "bom-ref": "payments-api@1.5.0"
+    },
+    "properties": [
+      {
+        "name": "seed:tag",
+        "value": "backend"
+      },
+      {
+        "name": "seed:tag",
+        "value": "team-payments"
+      },
+      {
+        "name": "seed:tag",
+        "value": "production"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "express",
+      "version": "4.21.2",
+      "bom-ref": "pkg:npm/express@4.21.2",
+      "purl": "pkg:npm/express@4.21.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "lodash",
+      "version": "4.17.21",
+      "bom-ref": "pkg:npm/lodash@4.17.21",
+      "purl": "pkg:npm/lodash@4.17.21",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "jsonwebtoken",
+      "version": "9.0.2",
+      "bom-ref": "pkg:npm/jsonwebtoken@9.0.2",
+      "purl": "pkg:npm/jsonwebtoken@9.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "axios",
+      "version": "1.7.9",
+      "bom-ref": "pkg:npm/axios@1.7.9",
+      "purl": "pkg:npm/axios@1.7.9",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pg",
+      "version": "8.13.1",
+      "bom-ref": "pkg:npm/pg@8.13.1",
+      "purl": "pkg:npm/pg@8.13.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  ]
+}
