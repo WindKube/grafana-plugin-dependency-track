@@ -107,6 +107,7 @@ test('alert rule on stale SBOMs', async ({ request }) => {
   expect(fresh.every((r) => r.value === 1)).toBeTruthy();
 
   const stale = await evaluate(30 * 24 * 3600);
+  expect(stale.map((r) => r.labels.project).sort()).toEqual(fresh.map((r) => r.labels.project).sort());
   expect(stale.every((r) => r.value === 0)).toBeTruthy();
 });
 

@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"context"
+	"math"
 	"time"
 
 	"github.com/WindKube/grafana-plugin-dependency-track/pkg/dtrack"
@@ -38,17 +39,21 @@ func optionalTime(m *dtrack.Millis) *time.Time {
 	return &t
 }
 
-// bomAgeFrame is a numeric-long frame for "no BOM uploaded in N days" alerts. Projects
-// that never received a BOM have a null age.
+// bomAgeFrame is a numeric-long frame for "no BOM uploaded in N days" alerts. Projects that
+// never received a BOM get +Inf, so they breach every threshold instead of resolving to NoData.
 func bomAgeFrame(projects []dtrack.Project, now time.Time) *data.Frame {
 	var name, version, tags, classifier []string
-	var ages []*float64
+	var ages []float64
 	for _, p := range projects {
 		name = append(name, p.Name)
 		version = append(version, p.Version)
 		tags = append(tags, projectLabels(p)["tags"])
 		classifier = append(classifier, p.Classifier)
-		ages = append(ages, bomAge(p, now))
+		age := math.Inf(1)
+		if a := bomAge(p, now); a != nil {
+			age = *a
+		}
+		ages = append(ages, age)
 	}
 	ageField := data.NewField("bom_age_seconds", nil, nonNil(ages))
 	ageField.Config = &data.FieldConfig{Unit: "s", DisplayName: "BOM age"}

@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -83,7 +84,7 @@ func TestProjectBOMAge(t *testing.T) {
 			t.Fatalf("duplicate row %s", key)
 		}
 		seen[key] = true
-		if f.Fields[4].At(row).(*float64) == nil {
+		if math.IsInf(f.Fields[4].At(row).(float64), 1) {
 			t.Fatalf("%s has no BOM age", key)
 		}
 	}
@@ -92,13 +93,13 @@ func TestProjectBOMAge(t *testing.T) {
 	}
 }
 
-func TestBOMAgeNullWithoutImport(t *testing.T) {
+func TestBOMAgeWithoutImport(t *testing.T) {
 	if v := bomAge(dtrack.Project{Name: "empty"}, fixtureNow); v != nil {
-		t.Fatalf("expected nil age, got %v", *v)
+		t.Fatalf("inventory age should be null, got %v", *v)
 	}
 	f := bomAgeFrame([]dtrack.Project{{Name: "empty"}}, fixtureNow)
-	if f.Fields[4].At(0).(*float64) != nil {
-		t.Fatal("expected null bom_age_seconds")
+	if v := f.Fields[4].At(0).(float64); !math.IsInf(v, 1) {
+		t.Fatalf("alerting age = %v, want +Inf so any stale threshold fires", v)
 	}
 }
 
