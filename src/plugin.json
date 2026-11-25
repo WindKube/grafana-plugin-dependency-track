@@ -28,7 +28,8 @@
       "path": "/a/%PLUGIN_ID%/home",
       "addToNav": true,
       "defaultNav": true
-    }
+    },
+    { "type": "datasource", "name": "Dependency-Track", "path": "datasource/plugin.json" }
   ],
   "dependencies": {
     "grafanaDependency": ">=13.0.0",
