@@ -2,13 +2,13 @@ package plugin
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/WindKube/grafana-plugin-dependency-track/pkg/dtrack"
 	"github.com/WindKube/grafana-plugin-dependency-track/pkg/models"
+	"github.com/WindKube/grafana-plugin-dependency-track/pkg/query"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
@@ -69,24 +69,44 @@ func (d *Datasource) Dispose() {
 func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
 	response := backend.NewQueryDataResponse()
 	for _, q := range req.Queries {
-		response.Responses[q.RefID] = d.query(ctx, req.PluginContext, q)
+		response.Responses[q.RefID] = d.query(ctx, q)
 	}
 	return response, nil
 }
 
-type queryModel struct{}
-
-func (d *Datasource) query(_ context.Context, _ backend.PluginContext, query backend.DataQuery) backend.DataResponse {
-	var qm queryModel
-	if len(query.JSON) > 0 {
-		if err := json.Unmarshal(query.JSON, &qm); err != nil {
-			return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("json unmarshal: %v", err))
-		}
+func (d *Datasource) query(ctx context.Context, dq backend.DataQuery) backend.DataResponse {
+	if d.settingsErr != nil {
+		return backend.ErrDataResponse(backend.StatusBadRequest, d.settingsErr.Error())
+	}
+	q, err := query.Parse(dq.JSON)
+	if err != nil {
+		return backend.ErrDataResponse(backend.StatusBadRequest, err.Error())
 	}
 
-	frame := data.NewFrame("response",
-		data.NewField("time", nil, []time.Time{query.TimeRange.From, query.TimeRange.To}),
-		data.NewField("values", nil, []int64{10, 20}),
-	)
-	return backend.DataResponse{Frames: data.Frames{frame}}
+	var frames data.Frames
+	switch q.QueryType {
+	case query.TypePortfolioMetrics:
+		frames, err = d.portfolioMetrics(ctx, q, dq.TimeRange)
+	case query.TypeProjectMetrics:
+		frames, err = d.projectMetrics(ctx, q, dq.TimeRange)
+	}
+	if err != nil {
+		return errorResponse(err)
+	}
+	for _, f := range frames {
+		f.RefID = dq.RefID
+	}
+	return backend.DataResponse{Frames: frames}
+}
+
+func errorResponse(err error) backend.DataResponse {
+	status := backend.StatusInternal
+	var apiErr *dtrack.APIError
+	switch {
+	case errors.As(err, &apiErr):
+		status = backend.Status(apiErr.StatusCode)
+	case errors.Is(err, context.DeadlineExceeded):
+		status = backend.StatusTimeout
+	}
+	return backend.ErrDataResponseWithSource(status, backend.ErrorSourceDownstream, err.Error())
 }

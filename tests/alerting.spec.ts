@@ -1,0 +1,74 @@
+import { test, expect } from '@grafana/plugin-e2e';
+
+const DS_UID = 'dependencytrack';
+
+function rule(model: Record<string, unknown>) {
+  return {
+    condition: 'C',
+    data: [
+      { refId: 'A', datasourceUid: DS_UID, relativeTimeRange: { from: 600, to: 0 }, model: { refId: 'A', ...model } },
+      {
+        refId: 'B',
+        datasourceUid: '__expr__',
+        relativeTimeRange: { from: 0, to: 0 },
+        model: { refId: 'B', type: 'reduce', expression: 'A', reducer: 'last' },
+      },
+      {
+        refId: 'C',
+        datasourceUid: '__expr__',
+        relativeTimeRange: { from: 0, to: 0 },
+        model: {
+          refId: 'C',
+          type: 'threshold',
+          expression: 'B',
+          conditions: [{ evaluator: { type: 'gt', params: [0] } }],
+        },
+      },
+    ],
+  };
+}
+
+type Frame = {
+  schema: { fields: Array<{ type: string; labels?: Record<string, string> }> };
+  data: { values: unknown[][] };
+};
+
+function series(frames: Frame[]) {
+  return frames.map((f) => {
+    const idx = f.schema.fields.findIndex((field) => field.type === 'number');
+    return { labels: f.schema.fields[idx].labels ?? {}, value: f.data.values[idx][0] as number };
+  });
+}
+
+test('alert rule on critical findings fires per project', async ({ request }) => {
+  const res = await request.post('/api/v1/eval', {
+    data: rule({
+      queryType: 'projectMetrics',
+      mode: 'current',
+      metrics: ['critical'],
+      projects: { mode: 'all', onlyLatest: true },
+    }),
+  });
+  expect(res.ok()).toBeTruthy();
+  const body = await res.json();
+  const results = series(body.results.C.frames);
+
+  const firing = results.filter((r) => r.value === 1).map((r) => r.labels.project);
+  expect(firing.sort()).toEqual(['inventory-service']);
+  expect(results).toHaveLength(4);
+  for (const r of results) {
+    expect(r.labels).toMatchObject({ metric: 'critical', severity: 'critical' });
+    expect(r.labels.version).toBeTruthy();
+  }
+});
+
+test('alert rule on portfolio policy violations', async ({ request }) => {
+  const res = await request.post('/api/v1/eval', {
+    data: rule({ queryType: 'portfolioMetrics', mode: 'current', metrics: ['policyViolationsFail', 'kev'] }),
+  });
+  expect(res.ok()).toBeTruthy();
+  const results = series((await res.json()).results.C.frames);
+  expect(results).toHaveLength(2);
+  expect(results.find((r) => r.labels.metric === 'policyViolationsFail')?.value).toBe(1);
+  expect(results.find((r) => r.labels.metric === 'kev')?.value).toBe(0);
+});

@@ -5,6 +5,7 @@
   "id": "windkube-dependencytrack-datasource",
   "metrics": true,
   "backend": true,
+  "alerting": true,
   "executable": "gpx_dependencytrack",
   "info": {
     "description": "Query OWASP Dependency-Track metrics, findings and policy violations.",

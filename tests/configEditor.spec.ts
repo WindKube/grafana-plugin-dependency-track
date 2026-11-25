@@ -17,7 +17,11 @@ test('provisioned data source passes the health check', async ({
   await expect(configPage).toHaveAlert('success', { hasText: /Connected to Dependency-Track 5\./ });
 });
 
-test('health check reports an invalid API key', async ({ createDataSourceConfigPage, readProvisionedDataSource, page }) => {
+test('health check reports an invalid API key', async ({
+  createDataSourceConfigPage,
+  readProvisionedDataSource,
+  page,
+}) => {
   const ds = await readProvisionedDataSource({ fileName: 'datasources.yml' });
   const configPage = await createDataSourceConfigPage({ type: ds.type });
   await page.getByPlaceholder('https://dtrack-api.example.com').fill(ds.url ?? '');
