@@ -46,6 +46,16 @@ type Client struct {
 	userAgent  string
 }
 
+// ErrUnexpectedResponse marks a 2xx response whose body is not the expected JSON, e.g. an HTML page.
+var ErrUnexpectedResponse = errors.New("unexpected response body")
+
+type noRetriesKey struct{}
+
+// WithoutRetries makes requests made with ctx fail on the first error, e.g. for health checks.
+func WithoutRetries(ctx context.Context) context.Context {
+	return context.WithValue(ctx, noRetriesKey{}, true)
+}
+
 type APIError struct {
 	StatusCode int
 	Method     string
@@ -120,7 +130,7 @@ func (c *Client) get(ctx context.Context, path string, query url.Values, out any
 
 	if out != nil {
 		if err := json.NewDecoder(resp.Body).Decode(out); err != nil {
-			return nil, fmt.Errorf("dependency-track: decoding %s: %w", path, err)
+			return nil, fmt.Errorf("dependency-track: decoding %s: %w: %w", path, ErrUnexpectedResponse, err)
 		}
 	}
 	return resp.Header, nil
@@ -138,7 +148,11 @@ func (c *Client) do(ctx context.Context, path string, query url.Values) (*http.R
 	u.RawQuery = query.Encode()
 
 	var lastErr error
-	for attempt := 0; attempt <= c.maxRetries; attempt++ {
+	maxRetries := c.maxRetries
+	if v, _ := ctx.Value(noRetriesKey{}).(bool); v {
+		maxRetries = 0
+	}
+	for attempt := 0; attempt <= maxRetries; attempt++ {
 		if attempt > 0 {
 			if err := sleep(ctx, c.backoff(attempt)); err != nil {
 				return nil, err

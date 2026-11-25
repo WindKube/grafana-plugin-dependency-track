@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/WindKube/grafana-plugin-dependency-track/pkg/dtrack"
@@ -24,6 +25,7 @@ type Datasource struct {
 	settings    *models.Settings
 	settingsErr error
 	client      *dtrack.Client
+	httpClient  *http.Client
 }
 
 func NewDatasource(ctx context.Context, s backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
@@ -40,14 +42,16 @@ func NewDatasource(ctx context.Context, s backend.DataSourceInstanceSettings) (i
 	if err != nil {
 		return nil, fmt.Errorf("http client options: %w", err)
 	}
-	httpClient, err := httpclient.New(opts)
-	if err != nil {
+	if !settings.CustomTimeout && opts.Timeouts != nil {
+		opts.Timeouts.Timeout = dtrack.DefaultTimeout
+	}
+	if ds.httpClient, err = httpclient.New(opts); err != nil {
 		return nil, fmt.Errorf("http client: %w", err)
 	}
 	ds.client, err = dtrack.New(dtrack.Options{
 		BaseURL:    settings.URL,
 		APIKey:     settings.APIKey,
-		HTTPClient: httpClient,
+		HTTPClient: ds.httpClient,
 	})
 	if err != nil {
 		ds.settingsErr = err
@@ -55,7 +59,12 @@ func NewDatasource(ctx context.Context, s backend.DataSourceInstanceSettings) (i
 	return ds, nil
 }
 
-func (d *Datasource) Dispose() {}
+// Dispose runs when the settings change and a new instance replaces this one.
+func (d *Datasource) Dispose() {
+	if d.httpClient != nil {
+		d.httpClient.CloseIdleConnections()
+	}
+}
 
 func (d *Datasource) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
 	response := backend.NewQueryDataResponse()

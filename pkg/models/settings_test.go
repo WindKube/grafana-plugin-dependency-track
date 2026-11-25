@@ -23,6 +23,23 @@ func TestLoadSettings(t *testing.T) {
 	}
 }
 
+func TestCustomTimeout(t *testing.T) {
+	for raw, want := range map[string]bool{
+		`{}`:               false,
+		`{"timeout":0}`:    false,
+		`{"timeout":"30"}`: false,
+		`{"timeout":120}`:  true,
+	} {
+		s, err := LoadSettings(backend.DataSourceInstanceSettings{JSONData: []byte(raw)})
+		if err != nil {
+			t.Fatalf("%s: %v", raw, err)
+		}
+		if s.CustomTimeout != want {
+			t.Errorf("%s: CustomTimeout = %v", raw, s.CustomTimeout)
+		}
+	}
+}
+
 func TestValidate(t *testing.T) {
 	if err := (&Settings{APIKey: "k"}).Validate(); err == nil {
 		t.Error("expected missing URL error")

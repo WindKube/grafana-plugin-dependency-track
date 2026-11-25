@@ -13,6 +13,9 @@ type Settings struct {
 	URL    string `json:"-"`
 	UIURL  string `json:"uiUrl"`
 	APIKey string `json:"-"`
+	// CustomTimeout is true when jsonData sets Grafana's HTTP timeout; otherwise the plugin
+	// default applies instead of the SDK's 30s.
+	CustomTimeout bool `json:"-"`
 }
 
 func LoadSettings(source backend.DataSourceInstanceSettings) (*Settings, error) {
@@ -20,6 +23,14 @@ func LoadSettings(source backend.DataSourceInstanceSettings) (*Settings, error) 
 	if len(source.JSONData) > 0 {
 		if err := json.Unmarshal(source.JSONData, &s); err != nil {
 			return nil, fmt.Errorf("could not parse settings: %w", err)
+		}
+		// Same rule as the SDK: only a positive number overrides the default.
+		var raw struct {
+			Timeout any `json:"timeout"`
+		}
+		_ = json.Unmarshal(source.JSONData, &raw)
+		if v, ok := raw.Timeout.(float64); ok && v > 0 {
+			s.CustomTimeout = true
 		}
 	}
 	s.URL = strings.TrimSpace(source.URL)
