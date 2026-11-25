@@ -171,20 +171,24 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
               />
             </EditorField>
           )}
-          <EditorField label="Latest version only">
-            <InlineSwitch
-              aria-label="Latest version only"
-              value={projects.onlyLatest}
-              onChange={(e) => updateProjects({ onlyLatest: e.currentTarget.checked })}
-            />
-          </EditorField>
-          <EditorField label="Include inactive">
-            <InlineSwitch
-              aria-label="Include inactive"
-              value={projects.includeInactive}
-              onChange={(e) => updateProjects({ includeInactive: e.currentTarget.checked })}
-            />
-          </EditorField>
+          {projects.mode !== 'uuid' && (
+            <>
+              <EditorField label="Latest version only">
+                <InlineSwitch
+                  aria-label="Latest version only"
+                  value={projects.onlyLatest}
+                  onChange={(e) => updateProjects({ onlyLatest: e.currentTarget.checked })}
+                />
+              </EditorField>
+              <EditorField label="Include inactive">
+                <InlineSwitch
+                  aria-label="Include inactive"
+                  value={projects.includeInactive}
+                  onChange={(e) => updateProjects({ includeInactive: e.currentTarget.checked })}
+                />
+              </EditorField>
+            </>
+          )}
         </EditorRow>
       )}
     </EditorRows>
