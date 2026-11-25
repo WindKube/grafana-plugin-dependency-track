@@ -149,6 +149,21 @@ jobs:
       - run: terraform init -backend=false -input=false
       - run: terraform validate
 
+  renovate-config:
+    name: Validate Renovate config
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - run: npx --yes --package "renovate@${RENOVATE_VERSION}" -- renovate-config-validator --strict
+        env:
+          # renovate: datasource=npm depName=renovate
+          RENOVATE_VERSION: '44.263.1'
+
   resolve-versions:
     name: Resolve e2e images
     runs-on: blacksmith-4vcpu-ubuntu-2404

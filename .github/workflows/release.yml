@@ -25,6 +25,7 @@ jobs:
         with:
           # The action defaults to Node 20 and Go 1.25; the build needs Node 24 and the go.mod toolchain.
           node-version: '24'
-          go-version: '1.26.5'
+          # renovate: datasource=golang-version depName=go
+          go-version: '1.26.11'
           policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
           attestation: true
