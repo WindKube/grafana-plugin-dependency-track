@@ -1,0 +1,66 @@
+[
+  {
+    "name": "backend",
+    "projectCount": 3,
+    "collectionProjectCount": 0,
+    "policyCount": 0,
+    "notificationRuleCount": 0,
+    "vulnerabilityCount": 0
+  },
+  {
+    "name": "batch",
+    "projectCount": 1,
+    "collectionProjectCount": 0,
+    "policyCount": 0,
+    "notificationRuleCount": 0,
+    "vulnerabilityCount": 0
+  },
+  {
+    "name": "frontend",
+    "projectCount": 1,
+    "collectionProjectCount": 0,
+    "policyCount": 0,
+    "notificationRuleCount": 0,
+    "vulnerabilityCount": 0
+  },
+  {
+    "name": "production",
+    "projectCount": 3,
+    "collectionProjectCount": 0,
+    "policyCount": 0,
+    "notificationRuleCount": 0,
+    "vulnerabilityCount": 0
+  },
+  {
+    "name": "staging",
+    "projectCount": 1,
+    "collectionProjectCount": 0,
+    "policyCount": 0,
+    "notificationRuleCount": 0,
+    "vulnerabilityCount": 0
+  },
+  {
+    "name": "team-logistics",
+    "projectCount": 2,
+    "collectionProjectCount": 0,
+    "policyCount": 0,
+    "notificationRuleCount": 0,
+    "vulnerabilityCount": 0
+  },
+  {
+    "name": "team-payments",
+    "projectCount": 2,
+    "collectionProjectCount": 0,
+    "policyCount": 0,
+    "notificationRuleCount": 0,
+    "vulnerabilityCount": 0
+  },
+  {
+    "name": "team-web",
+    "projectCount": 1,
+    "collectionProjectCount": 0,
+    "policyCount": 0,
+    "notificationRuleCount": 0,
+    "vulnerabilityCount": 0
+  }
+]

@@ -1,0 +1,701 @@
+[
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "web-frontend",
+      "version": "2.3.0",
+      "classifier": "APPLICATION",
+      "uuid": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+      "tags": [
+        {
+          "name": "production"
+        },
+        {
+          "name": "team-web"
+        },
+        {
+          "name": "frontend"
+        }
+      ],
+      "lastBomImport": 1795611065613,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 9.0,
+      "lastVulnerabilityAnalysis": 1795611070618,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "name": "marked",
+      "version": "0.3.6",
+      "classifier": "LIBRARY",
+      "purl": "pkg:npm/marked@0.3.6",
+      "purlCoordinates": "pkg:npm/marked@0.3.6",
+      "resolvedLicense": {
+        "uuid": "b5ec78f1-77fa-4f5a-a5cf-b4c6d596ab46",
+        "name": "MIT License",
+        "licenseId": "MIT",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "web-frontend",
+        "version": "2.3.0",
+        "classifier": "APPLICATION",
+        "uuid": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+        "tags": [
+          {
+            "name": "production"
+          },
+          {
+            "name": "team-web"
+          },
+          {
+            "name": "frontend"
+          }
+        ],
+        "lastBomImport": 1795611065613,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 9.0,
+        "lastVulnerabilityAnalysis": 1795611070618,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 3.0,
+      "uuid": "249332eb-2aa1-4493-b561-bccac66da0fe",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Banned packages",
+        "operator": "ANY",
+        "violationState": "FAIL",
+        "uuid": "d569f0f5-d4cb-4233-87bd-007251fd865a",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:npm/(moment|marked)@.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "ad52a2c9-6801-42d4-9eba-26de8c144d29"
+    },
+    "timestamp": 1795611067613,
+    "uuid": "4b049e54-884b-4c66-b6c2-b898fcdabcff"
+  },
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "web-frontend",
+      "version": "2.3.0",
+      "classifier": "APPLICATION",
+      "uuid": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+      "tags": [
+        {
+          "name": "production"
+        },
+        {
+          "name": "team-web"
+        },
+        {
+          "name": "frontend"
+        }
+      ],
+      "lastBomImport": 1795611065613,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 9.0,
+      "lastVulnerabilityAnalysis": 1795611070618,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "name": "moment",
+      "version": "2.29.1",
+      "classifier": "LIBRARY",
+      "purl": "pkg:npm/moment@2.29.1",
+      "purlCoordinates": "pkg:npm/moment@2.29.1",
+      "resolvedLicense": {
+        "uuid": "b5ec78f1-77fa-4f5a-a5cf-b4c6d596ab46",
+        "name": "MIT License",
+        "licenseId": "MIT",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "web-frontend",
+        "version": "2.3.0",
+        "classifier": "APPLICATION",
+        "uuid": "51abccf1-b95d-49c6-b791-32fce5fd1ffe",
+        "tags": [
+          {
+            "name": "production"
+          },
+          {
+            "name": "team-web"
+          },
+          {
+            "name": "frontend"
+          }
+        ],
+        "lastBomImport": 1795611065613,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 9.0,
+        "lastVulnerabilityAnalysis": 1795611070618,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 1.0,
+      "uuid": "ace8509d-dfac-4123-84be-a1b5092ec031",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Banned packages",
+        "operator": "ANY",
+        "violationState": "FAIL",
+        "uuid": "d569f0f5-d4cb-4233-87bd-007251fd865a",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:npm/(moment|marked)@.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "ad52a2c9-6801-42d4-9eba-26de8c144d29"
+    },
+    "timestamp": 1795611067613,
+    "uuid": "21f79b6d-1be9-4f68-92fb-888a8aeffb1f"
+  },
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "report-worker",
+      "version": "0.9.2",
+      "classifier": "APPLICATION",
+      "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+      "tags": [
+        {
+          "name": "team-logistics"
+        },
+        {
+          "name": "batch"
+        }
+      ],
+      "lastBomImport": 1795611062413,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 9.0,
+      "lastVulnerabilityAnalysis": 1795611070621,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "name": "psycopg2",
+      "version": "2.8.6",
+      "classifier": "LIBRARY",
+      "purl": "pkg:pypi/psycopg2@2.8.6",
+      "purlCoordinates": "pkg:pypi/psycopg2@2.8.6",
+      "resolvedLicense": {
+        "uuid": "4d28a0ae-c7ad-4b39-89bf-76a0521969c1",
+        "name": "GNU Lesser General Public License v3.0 or later",
+        "licenseId": "LGPL-3.0-or-later",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "report-worker",
+        "version": "0.9.2",
+        "classifier": "APPLICATION",
+        "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+        "tags": [
+          {
+            "name": "team-logistics"
+          },
+          {
+            "name": "batch"
+          }
+        ],
+        "lastBomImport": 1795611062413,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 9.0,
+        "lastVulnerabilityAnalysis": 1795611070621,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 0.0,
+      "uuid": "ccfd8c2e-92ef-408c-8118-c5bb5aa88ca2",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Python review",
+        "operator": "ANY",
+        "violationState": "INFO",
+        "uuid": "0234cb24-83f3-4d74-9ab4-d2d14d6c0e77",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:pypi/.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "b3277427-338e-45b7-befc-e068bae57ecf"
+    },
+    "timestamp": 1795611064400,
+    "uuid": "f24b5dd5-4541-4939-b6a5-f7d71e179067"
+  },
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "report-worker",
+      "version": "0.9.2",
+      "classifier": "APPLICATION",
+      "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+      "tags": [
+        {
+          "name": "team-logistics"
+        },
+        {
+          "name": "batch"
+        }
+      ],
+      "lastBomImport": 1795611062413,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 9.0,
+      "lastVulnerabilityAnalysis": 1795611070621,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "name": "jinja2",
+      "version": "2.11.2",
+      "classifier": "LIBRARY",
+      "purl": "pkg:pypi/jinja2@2.11.2",
+      "purlCoordinates": "pkg:pypi/jinja2@2.11.2",
+      "resolvedLicense": {
+        "uuid": "67a9bf14-dbe1-4352-9010-31c3a2bb22e3",
+        "name": "BSD 3-Clause \"New\" or \"Revised\" License",
+        "licenseId": "BSD-3-Clause",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "report-worker",
+        "version": "0.9.2",
+        "classifier": "APPLICATION",
+        "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+        "tags": [
+          {
+            "name": "team-logistics"
+          },
+          {
+            "name": "batch"
+          }
+        ],
+        "lastBomImport": 1795611062413,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 9.0,
+        "lastVulnerabilityAnalysis": 1795611070621,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 0.0,
+      "uuid": "4680ea21-dff5-40a8-a8be-41e178b5fe57",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Python review",
+        "operator": "ANY",
+        "violationState": "INFO",
+        "uuid": "0234cb24-83f3-4d74-9ab4-d2d14d6c0e77",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:pypi/.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "b3277427-338e-45b7-befc-e068bae57ecf"
+    },
+    "timestamp": 1795611064399,
+    "uuid": "f8779111-c5e9-418a-8b6d-3eec48d24835"
+  },
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "report-worker",
+      "version": "0.9.2",
+      "classifier": "APPLICATION",
+      "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+      "tags": [
+        {
+          "name": "team-logistics"
+        },
+        {
+          "name": "batch"
+        }
+      ],
+      "lastBomImport": 1795611062413,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 9.0,
+      "lastVulnerabilityAnalysis": 1795611070621,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "name": "pyyaml",
+      "version": "5.3.1",
+      "classifier": "LIBRARY",
+      "purl": "pkg:pypi/pyyaml@5.3.1",
+      "purlCoordinates": "pkg:pypi/pyyaml@5.3.1",
+      "resolvedLicense": {
+        "uuid": "b5ec78f1-77fa-4f5a-a5cf-b4c6d596ab46",
+        "name": "MIT License",
+        "licenseId": "MIT",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "report-worker",
+        "version": "0.9.2",
+        "classifier": "APPLICATION",
+        "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+        "tags": [
+          {
+            "name": "team-logistics"
+          },
+          {
+            "name": "batch"
+          }
+        ],
+        "lastBomImport": 1795611062413,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 9.0,
+        "lastVulnerabilityAnalysis": 1795611070621,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 5.0,
+      "uuid": "bb0545f2-2f34-4bce-b25e-e7b90f425371",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Python review",
+        "operator": "ANY",
+        "violationState": "INFO",
+        "uuid": "0234cb24-83f3-4d74-9ab4-d2d14d6c0e77",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:pypi/.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "b3277427-338e-45b7-befc-e068bae57ecf"
+    },
+    "timestamp": 1795611064399,
+    "uuid": "2f2cce04-a3db-4250-973b-939ff98399b5"
+  },
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "report-worker",
+      "version": "0.9.2",
+      "classifier": "APPLICATION",
+      "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+      "tags": [
+        {
+          "name": "team-logistics"
+        },
+        {
+          "name": "batch"
+        }
+      ],
+      "lastBomImport": 1795611062413,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 9.0,
+      "lastVulnerabilityAnalysis": 1795611070621,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "name": "requests",
+      "version": "2.25.1",
+      "classifier": "LIBRARY",
+      "purl": "pkg:pypi/requests@2.25.1",
+      "purlCoordinates": "pkg:pypi/requests@2.25.1",
+      "resolvedLicense": {
+        "uuid": "562b1cc6-5f9d-4d17-ad78-5bfc9eb07fc0",
+        "name": "Apache License 2.0",
+        "licenseId": "Apache-2.0",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "report-worker",
+        "version": "0.9.2",
+        "classifier": "APPLICATION",
+        "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+        "tags": [
+          {
+            "name": "team-logistics"
+          },
+          {
+            "name": "batch"
+          }
+        ],
+        "lastBomImport": 1795611062413,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 9.0,
+        "lastVulnerabilityAnalysis": 1795611070621,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 3.0,
+      "uuid": "474ff769-7707-4acd-838e-2a2a37dac838",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Python review",
+        "operator": "ANY",
+        "violationState": "INFO",
+        "uuid": "0234cb24-83f3-4d74-9ab4-d2d14d6c0e77",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:pypi/.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "b3277427-338e-45b7-befc-e068bae57ecf"
+    },
+    "timestamp": 1795611064399,
+    "uuid": "823c6026-5935-4afe-93bf-2ed7408b38e7"
+  },
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "report-worker",
+      "version": "0.9.2",
+      "classifier": "APPLICATION",
+      "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+      "tags": [
+        {
+          "name": "team-logistics"
+        },
+        {
+          "name": "batch"
+        }
+      ],
+      "lastBomImport": 1795611062413,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 9.0,
+      "lastVulnerabilityAnalysis": 1795611070621,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "name": "urllib3",
+      "version": "1.26.4",
+      "classifier": "LIBRARY",
+      "purl": "pkg:pypi/urllib3@1.26.4",
+      "purlCoordinates": "pkg:pypi/urllib3@1.26.4",
+      "resolvedLicense": {
+        "uuid": "b5ec78f1-77fa-4f5a-a5cf-b4c6d596ab46",
+        "name": "MIT License",
+        "licenseId": "MIT",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "report-worker",
+        "version": "0.9.2",
+        "classifier": "APPLICATION",
+        "uuid": "79a9067d-9905-405b-8e42-cd980db549e9",
+        "tags": [
+          {
+            "name": "team-logistics"
+          },
+          {
+            "name": "batch"
+          }
+        ],
+        "lastBomImport": 1795611062413,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 9.0,
+        "lastVulnerabilityAnalysis": 1795611070621,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 1.0,
+      "uuid": "ec413271-8e68-40dc-83ac-8717393c44a8",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Python review",
+        "operator": "ANY",
+        "violationState": "INFO",
+        "uuid": "0234cb24-83f3-4d74-9ab4-d2d14d6c0e77",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:pypi/.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "b3277427-338e-45b7-befc-e068bae57ecf"
+    },
+    "timestamp": 1795611064399,
+    "uuid": "41241f26-8750-4a11-9b75-36d6a7570155"
+  },
+  {
+    "type": "OPERATIONAL",
+    "project": {
+      "authors": [],
+      "name": "inventory-service",
+      "version": "3.1.0",
+      "classifier": "APPLICATION",
+      "uuid": "b23f2e59-e361-4ed8-bb51-e566275d7cd9",
+      "tags": [
+        {
+          "name": "team-logistics"
+        },
+        {
+          "name": "staging"
+        },
+        {
+          "name": "backend"
+        }
+      ],
+      "lastBomImport": 1795611053247,
+      "lastBomImportFormat": "CycloneDX 1.6",
+      "lastInheritedRiskScore": 23.0,
+      "lastVulnerabilityAnalysis": 1795611070423,
+      "isLatest": true,
+      "active": true
+    },
+    "component": {
+      "authors": [],
+      "group": "com.h2database",
+      "name": "h2",
+      "version": "1.4.199",
+      "classifier": "LIBRARY",
+      "purl": "pkg:maven/com.h2database/h2@1.4.199",
+      "purlCoordinates": "pkg:maven/com.h2database/h2@1.4.199",
+      "resolvedLicense": {
+        "uuid": "45b35658-790e-4833-ad45-f36f76d50988",
+        "name": "Mozilla Public License 2.0",
+        "licenseId": "MPL-2.0",
+        "isOsiApproved": true,
+        "isFsfLibre": true,
+        "isDeprecatedLicenseId": false,
+        "isCustomLicense": false
+      },
+      "project": {
+        "authors": [],
+        "name": "inventory-service",
+        "version": "3.1.0",
+        "classifier": "APPLICATION",
+        "uuid": "b23f2e59-e361-4ed8-bb51-e566275d7cd9",
+        "tags": [
+          {
+            "name": "team-logistics"
+          },
+          {
+            "name": "staging"
+          },
+          {
+            "name": "backend"
+          }
+        ],
+        "lastBomImport": 1795611053247,
+        "lastBomImportFormat": "CycloneDX 1.6",
+        "lastInheritedRiskScore": 23.0,
+        "lastVulnerabilityAnalysis": 1795611070423,
+        "isLatest": true,
+        "active": true
+      },
+      "lastInheritedRiskScore": 0.0,
+      "uuid": "4aee8451-1561-4f39-a2da-1663ea12aacb",
+      "expandDependencyGraph": false,
+      "isInternal": false
+    },
+    "policyCondition": {
+      "policy": {
+        "name": "Embedded databases",
+        "operator": "ANY",
+        "violationState": "WARN",
+        "uuid": "64546e48-08da-49e1-8e1d-442f276a1ee7",
+        "includeChildren": false,
+        "invertTagMatch": false,
+        "onlyLatestProjectVersion": false,
+        "global": true
+      },
+      "operator": "MATCHES",
+      "subject": "PACKAGE_URL",
+      "value": "pkg:maven/com.h2database/.*",
+      "violationType": "OPERATIONAL",
+      "uuid": "e2c861bb-7eae-4019-8a4a-46c2aa318805"
+    },
+    "timestamp": 1795611054837,
+    "uuid": "2c683aea-b5d8-4d69-8b3c-cf028e51d77f"
+  }
+]

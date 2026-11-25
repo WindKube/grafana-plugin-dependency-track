@@ -1,0 +1,18 @@
+{
+  "uuid": "9abb6784-6f87-482f-9122-30cdc4abd87f",
+  "name": "Grafana",
+  "permissions": [
+    {
+      "name": "VIEW_POLICY_VIOLATION",
+      "description": "Provides the ability to view policy violations"
+    },
+    {
+      "name": "VIEW_PORTFOLIO",
+      "description": "Provides the ability to view the portfolio of projects, components, and licenses"
+    },
+    {
+      "name": "VIEW_VULNERABILITY",
+      "description": "Provides the ability to view the vulnerabilities projects are affected by"
+    }
+  ]
+}
