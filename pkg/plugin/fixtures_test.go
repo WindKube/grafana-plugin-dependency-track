@@ -101,6 +101,13 @@ func fixtureDT(t *testing.T) *Datasource {
 			_, _ = w.Write(readFixture(t, "portfolio_days"))
 		case strings.HasPrefix(p, "/v1/metrics/project/") && strings.Contains(p, "/since/"):
 			_, _ = w.Write(readFixture(t, "project_days"))
+		case p == "/v1/metrics/vulnerability":
+			_, _ = w.Write([]byte(`[
+				{"year":2026,"month":8,"count":3100,"measuredAt":1795611053247},
+				{"year":2026,"month":10,"count":3500,"measuredAt":1795611053247},
+				{"year":2026,"month":11,"count":1200,"measuredAt":1795611053247},
+				{"year":2026,"month":12,"count":0,"measuredAt":1795611053247}
+			]`))
 		case strings.HasPrefix(p, "/v1/metrics/project/") && strings.HasSuffix(p, "/current"):
 			_, _ = w.Write(readFixture(t, "project_current"))
 		default:

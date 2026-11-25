@@ -6,9 +6,11 @@ export enum QueryType {
   ProjectMetrics = 'projectMetrics',
   Findings = 'findings',
   Violations = 'violations',
+  Projects = 'projects',
+  VulnerabilityMetrics = 'vulnerabilityMetrics',
 }
 
-export type QueryFormat = 'table' | 'count';
+export type QueryFormat = 'table' | 'count' | 'bomAge';
 
 export const SEVERITIES = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNASSIGNED'];
 export const ANALYSIS_STATES = ['NOT_SET', 'EXPLOITABLE', 'IN_TRIAGE', 'FALSE_POSITIVE', 'NOT_AFFECTED', 'RESOLVED'];

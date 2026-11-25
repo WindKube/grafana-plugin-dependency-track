@@ -25,11 +25,18 @@ const queryTypes: Array<ComboboxOption<QueryType>> = [
   { value: QueryType.ProjectMetrics, label: 'Project metrics' },
   { value: QueryType.Findings, label: 'Findings' },
   { value: QueryType.Violations, label: 'Policy violations' },
+  { value: QueryType.Projects, label: 'Projects' },
+  { value: QueryType.VulnerabilityMetrics, label: 'Vulnerability database' },
 ];
 
 const formats: Array<SelectableValue<QueryFormat>> = [
   { value: 'table', label: 'Table', description: 'One row per finding or violation' },
   { value: 'count', label: 'Count', description: 'Counts per project for alerting' },
+];
+
+const projectFormats: Array<SelectableValue<QueryFormat>> = [
+  { value: 'table', label: 'Inventory', description: 'One row per project with BOM and risk details' },
+  { value: 'bomAge', label: 'BOM age', description: 'Seconds since the last BOM import, for alerting' },
 ];
 
 const modes: Array<SelectableValue<QueryMode>> = [
@@ -71,6 +78,8 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
   const isPortfolio = q.queryType === QueryType.PortfolioMetrics;
   const isMetrics = isPortfolio || q.queryType === QueryType.ProjectMetrics;
   const isViolations = q.queryType === QueryType.Violations;
+  const isProjects = q.queryType === QueryType.Projects;
+  const hasProjects = !isPortfolio && q.queryType !== QueryType.VulnerabilityMetrics;
   const format = q.format ?? 'table';
   const policyOptions = useOptions(
     async () => (await datasource.getPolicies()).map((value) => ({ value })),
@@ -79,11 +88,11 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
 
   const tagOptions = useOptions(
     async () => (await datasource.getTags()).map((value) => ({ value })),
-    !isPortfolio && projects.mode === 'tag'
+    hasProjects && projects.mode === 'tag'
   );
   const classifierOptions = useOptions(
     async () => (await datasource.getClassifiers()).map((value) => ({ value })),
-    !isPortfolio && projects.mode === 'classifier'
+    hasProjects && projects.mode === 'classifier'
   );
   const projectOptions = useOptions(
     async () =>
@@ -92,7 +101,7 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
         label: `${p.name} ${p.version}`,
         description: p.isLatest ? 'latest' : undefined,
       })),
-    !isPortfolio && projects.mode === 'uuid'
+    hasProjects && projects.mode === 'uuid'
   );
 
   const update = (patch: Partial<DTQuery>) => {
@@ -114,11 +123,12 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
               const metrics = (q.metrics ?? []).filter((m) =>
                 metricOptions(v.value === QueryType.PortfolioMetrics).some((o) => o.value === m)
               );
-              update({ queryType: v.value, metrics });
+              const keepFormat = (v.value === QueryType.Projects) === isProjects;
+              update({ queryType: v.value, metrics, format: keepFormat ? q.format : 'table' });
             }}
           />
         </EditorField>
-        {isMetrics ? (
+        {q.queryType === QueryType.VulnerabilityMetrics ? null : isMetrics ? (
           <>
             <EditorField label="Mode">
               <RadioButtonGroup options={modes} value={q.mode} onChange={(mode) => update({ mode })} />
@@ -134,7 +144,11 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
           </>
         ) : (
           <EditorField label="Format">
-            <RadioButtonGroup options={formats} value={format} onChange={(f) => update({ format: f })} />
+            <RadioButtonGroup
+              options={isProjects ? projectFormats : formats}
+              value={format}
+              onChange={(f) => update({ format: f })}
+            />
           </EditorField>
         )}
       </EditorRow>
@@ -149,7 +163,7 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
           onChange={(violations) => update({ violations })}
         />
       )}
-      {!isPortfolio && (
+      {hasProjects && (
         <EditorRow>
           <EditorField label="Projects">
             <Combobox

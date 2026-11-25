@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/WindKube/grafana-plugin-dependency-track/pkg/dtrack"
 	"github.com/WindKube/grafana-plugin-dependency-track/pkg/models"
@@ -28,6 +29,7 @@ type Datasource struct {
 	settingsErr error
 	client      *dtrack.Client
 	httpClient  *http.Client
+	now         func() time.Time
 }
 
 func NewDatasource(ctx context.Context, s backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
@@ -35,7 +37,7 @@ func NewDatasource(ctx context.Context, s backend.DataSourceInstanceSettings) (i
 	if err != nil {
 		return nil, err
 	}
-	ds := &Datasource{settings: settings}
+	ds := &Datasource{settings: settings, now: time.Now}
 	ds.CallResourceHandler = ds.newResourceHandler()
 	if ds.settingsErr = settings.Validate(); ds.settingsErr != nil {
 		return ds, nil
@@ -96,6 +98,10 @@ func (d *Datasource) query(ctx context.Context, dq backend.DataQuery) backend.Da
 		frames, err = d.findings(ctx, q)
 	case query.TypeViolations:
 		frames, err = d.violations(ctx, q)
+	case query.TypeProjects:
+		frames, err = d.projectInventory(ctx, q)
+	case query.TypeVulnerabilities:
+		frames, err = d.vulnerabilityMetrics(ctx, dq.TimeRange)
 	}
 	if err != nil {
 		return errorResponse(err)

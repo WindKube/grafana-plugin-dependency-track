@@ -13,6 +13,8 @@ const (
 	TypeProjectMetrics   Type = "projectMetrics"
 	TypeFindings         Type = "findings"
 	TypeViolations       Type = "violations"
+	TypeProjects         Type = "projects"
+	TypeVulnerabilities  Type = "vulnerabilityMetrics"
 )
 
 type Format string
@@ -20,6 +22,8 @@ type Format string
 const (
 	FormatTable Format = "table"
 	FormatCount Format = "count"
+	// FormatBOMAge returns one row per project with the age of its last BOM import.
+	FormatBOMAge Format = "bomAge"
 )
 
 var (
@@ -121,6 +125,13 @@ func (q *Query) validate() error {
 			return err
 		}
 		return q.Projects.validate()
+	case TypeProjects:
+		if q.Format != FormatTable && q.Format != FormatBOMAge {
+			return fmt.Errorf("unknown format %q", q.Format)
+		}
+		return q.Projects.validate()
+	case TypeVulnerabilities:
+		return nil
 	default:
 		return fmt.Errorf("unknown query type %q", q.QueryType)
 	}

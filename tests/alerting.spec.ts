@@ -2,7 +2,7 @@ import { test, expect } from '@grafana/plugin-e2e';
 
 const DS_UID = 'dependencytrack';
 
-function rule(model: Record<string, unknown>) {
+function rule(model: Record<string, unknown>, threshold = 0) {
   return {
     condition: 'C',
     data: [
@@ -21,7 +21,7 @@ function rule(model: Record<string, unknown>) {
           refId: 'C',
           type: 'threshold',
           expression: 'B',
-          conditions: [{ evaluator: { type: 'gt', params: [0] } }],
+          conditions: [{ evaluator: { type: 'gt', params: [threshold] } }],
         },
       },
     ],
@@ -87,6 +87,27 @@ test('alert rule on FAIL policy violations counts per project', async ({ request
   const firing = results.filter((r) => r.value === 1);
   expect(firing).toHaveLength(1);
   expect(firing[0].labels).toMatchObject({ project: 'web-frontend', state: 'FAIL', type: 'OPERATIONAL' });
+});
+
+test('alert rule on stale SBOMs', async ({ request }) => {
+  const query = { queryType: 'projects', format: 'bomAge', projects: { mode: 'all', onlyLatest: true } };
+  const evaluate = async (threshold: number) => {
+    const res = await request.post('/api/v1/eval', { data: rule(query, threshold) });
+    expect(res.ok()).toBeTruthy();
+    return series((await res.json()).results.C.frames);
+  };
+
+  const fresh = await evaluate(0);
+  expect(fresh.map((r) => r.labels.project).sort()).toEqual([
+    'inventory-service',
+    'payments-api',
+    'report-worker',
+    'web-frontend',
+  ]);
+  expect(fresh.every((r) => r.value === 1)).toBeTruthy();
+
+  const stale = await evaluate(30 * 24 * 3600);
+  expect(stale.every((r) => r.value === 0)).toBeTruthy();
 });
 
 test('alert rule on critical findings count', async ({ request }) => {
