@@ -1,0 +1,37 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "app",
+  "name": "Dependency-Track",
+  "id": "windkube-dependencytrack-app",
+  "info": {
+    "keywords": ["dependency-track", "owasp", "sbom", "vulnerabilities", "security", "supply chain"],
+    "description": "Explore and alert on OWASP Dependency-Track portfolio risk, findings and policy violations.",
+    "author": {
+      "name": "WindKube"
+    },
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      { "name": "Source code", "url": "https://github.com/WindKube/grafana-plugin-dependency-track" },
+      { "name": "License", "url": "https://github.com/WindKube/grafana-plugin-dependency-track/blob/main/LICENSE" }
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "includes": [
+    {
+      "type": "page",
+      "name": "Home",
+      "path": "/a/%PLUGIN_ID%/home",
+      "addToNav": true,
+      "defaultNav": true
+    }
+  ],
+  "dependencies": {
+    "grafanaDependency": ">=13.0.0",
+    "plugins": []
+  }
+}
