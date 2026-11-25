@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/WindKube/grafana-plugin-dependency-track/pkg/dtrack"
 	"github.com/WindKube/grafana-plugin-dependency-track/pkg/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
@@ -18,11 +20,40 @@ var (
 	_ instancemgmt.InstanceDisposer = (*Datasource)(nil)
 )
 
-func NewDatasource(_ context.Context, _ backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
-	return &Datasource{}, nil
+type Datasource struct {
+	settings    *models.Settings
+	settingsErr error
+	client      *dtrack.Client
 }
 
-type Datasource struct{}
+func NewDatasource(ctx context.Context, s backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
+	settings, err := models.LoadSettings(s)
+	if err != nil {
+		return nil, err
+	}
+	ds := &Datasource{settings: settings}
+	if ds.settingsErr = settings.Validate(); ds.settingsErr != nil {
+		return ds, nil
+	}
+
+	opts, err := s.HTTPClientOptions(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("http client options: %w", err)
+	}
+	httpClient, err := httpclient.New(opts)
+	if err != nil {
+		return nil, fmt.Errorf("http client: %w", err)
+	}
+	ds.client, err = dtrack.New(dtrack.Options{
+		BaseURL:    settings.URL,
+		APIKey:     settings.APIKey,
+		HTTPClient: httpClient,
+	})
+	if err != nil {
+		ds.settingsErr = err
+	}
+	return ds, nil
+}
 
 func (d *Datasource) Dispose() {}
 
@@ -49,17 +80,4 @@ func (d *Datasource) query(_ context.Context, _ backend.PluginContext, query bac
 		data.NewField("values", nil, []int64{10, 20}),
 	)
 	return backend.DataResponse{Frames: data.Frames{frame}}
-}
-
-func (d *Datasource) CheckHealth(_ context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-	config, err := models.LoadPluginSettings(*req.PluginContext.DataSourceInstanceSettings)
-	if err != nil {
-		return &backend.CheckHealthResult{Status: backend.HealthStatusError, Message: "Unable to load settings"}, nil
-	}
-
-	if config.Secrets.ApiKey == "" {
-		return &backend.CheckHealthResult{Status: backend.HealthStatusError, Message: "API key is missing"}, nil
-	}
-
-	return &backend.CheckHealthResult{Status: backend.HealthStatusOk, Message: "Data source is working"}, nil
 }

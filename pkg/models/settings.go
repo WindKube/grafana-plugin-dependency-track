@@ -2,34 +2,38 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
-type PluginSettings struct {
-	Path    string                `json:"path"`
-	Secrets *SecretPluginSettings `json:"-"`
+type Settings struct {
+	URL    string `json:"-"`
+	UIURL  string `json:"uiUrl"`
+	APIKey string `json:"-"`
 }
 
-type SecretPluginSettings struct {
-	ApiKey string `json:"apiKey"`
-}
-
-func LoadPluginSettings(source backend.DataSourceInstanceSettings) (*PluginSettings, error) {
-	settings := PluginSettings{}
-	err := json.Unmarshal(source.JSONData, &settings)
-	if err != nil {
-		return nil, fmt.Errorf("could not unmarshal PluginSettings json: %w", err)
+func LoadSettings(source backend.DataSourceInstanceSettings) (*Settings, error) {
+	s := Settings{}
+	if len(source.JSONData) > 0 {
+		if err := json.Unmarshal(source.JSONData, &s); err != nil {
+			return nil, fmt.Errorf("could not parse settings: %w", err)
+		}
 	}
-
-	settings.Secrets = loadSecretPluginSettings(source.DecryptedSecureJSONData)
-
-	return &settings, nil
+	s.URL = strings.TrimSpace(source.URL)
+	s.UIURL = strings.TrimRight(strings.TrimSpace(s.UIURL), "/")
+	s.APIKey = source.DecryptedSecureJSONData["apiKey"]
+	return &s, nil
 }
 
-func loadSecretPluginSettings(source map[string]string) *SecretPluginSettings {
-	return &SecretPluginSettings{
-		ApiKey: source["apiKey"],
+func (s *Settings) Validate() error {
+	if s.URL == "" {
+		return errors.New("Dependency-Track URL is not configured")
 	}
+	if s.APIKey == "" {
+		return errors.New("API key is not configured")
+	}
+	return nil
 }
