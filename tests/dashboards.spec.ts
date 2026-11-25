@@ -84,5 +84,6 @@ test.describe('rendering', () => {
     }
     await expect(page.getByText('inventory-service').first()).toBeVisible();
     await expect(page.locator('a[href*="/projects/"]').first()).toHaveAttribute('href', /\/projects\/[0-9a-f-]{36}$/);
+    await expect(page.getByRole('columnheader', { name: /UUID/ })).toHaveCount(0);
   });
 });
