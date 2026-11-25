@@ -76,6 +76,17 @@ func hasKey[K comparable, V any](m map[K]V, k K) bool {
 }
 
 func (d *Datasource) findings(ctx context.Context, q *query.Query) (data.Frames, error) {
+	projects, byProject, err := d.collectFindings(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	if q.Format == query.FormatCount {
+		return data.Frames{findingCounts(projects, byProject, q.Findings)}, nil
+	}
+	return data.Frames{findingTable(projects, byProject)}, nil
+}
+
+func (d *Datasource) collectFindings(ctx context.Context, q *query.Query) ([]dtrack.Project, map[string][]dtrack.Finding, error) {
 	f := q.Findings
 	projects, byProject, err := collectPerProject(ctx, d, q.Projects,
 		func(ctx context.Context) ([]dtrack.Finding, error) {
@@ -92,16 +103,12 @@ func (d *Datasource) findings(ctx context.Context, q *query.Query) (data.Frames,
 		func(fi dtrack.Finding) string { return fi.Component.Project },
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-
 	for uuid, items := range byProject {
 		byProject[uuid] = slices.DeleteFunc(items, func(fi dtrack.Finding) bool { return !matchFinding(fi, f) })
 	}
-	if q.Format == query.FormatCount {
-		return data.Frames{findingCounts(projects, byProject, f)}, nil
-	}
-	return data.Frames{findingTable(projects, byProject)}, nil
+	return projects, byProject, nil
 }
 
 func matchFinding(fi dtrack.Finding, f query.FindingFilter) bool {

@@ -8,6 +8,17 @@ export enum QueryType {
   Violations = 'violations',
   Projects = 'projects',
   VulnerabilityMetrics = 'vulnerabilityMetrics',
+  Events = 'events',
+}
+
+export const EVENT_KINDS = [
+  { value: 'bomImport', label: 'BOM imports' },
+  { value: 'finding', label: 'New findings' },
+  { value: 'violation', label: 'Policy violations' },
+];
+
+export interface EventFilter {
+  kinds?: string[];
 }
 
 export type QueryFormat = 'table' | 'count' | 'bomAge';
@@ -59,6 +70,7 @@ export interface DTQuery extends DataQuery {
   format?: QueryFormat;
   findings?: FindingFilter;
   violations?: ViolationFilter;
+  events?: EventFilter;
 }
 
 export const DEFAULT_METRICS = ['critical', 'high', 'medium', 'low', 'unassigned'];

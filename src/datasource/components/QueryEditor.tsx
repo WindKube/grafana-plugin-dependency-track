@@ -7,6 +7,7 @@ import { DataSource } from '../datasource';
 import { metricOptions } from '../metrics';
 import {
   DEFAULT_QUERY,
+  EVENT_KINDS,
   DTDataSourceOptions,
   DTQuery,
   ProjectSelector,
@@ -27,6 +28,7 @@ const queryTypes: Array<ComboboxOption<QueryType>> = [
   { value: QueryType.Violations, label: 'Policy violations' },
   { value: QueryType.Projects, label: 'Projects' },
   { value: QueryType.VulnerabilityMetrics, label: 'Vulnerability database' },
+  { value: QueryType.Events, label: 'Events', description: 'For annotations' },
 ];
 
 const formats: Array<SelectableValue<QueryFormat>> = [
@@ -77,7 +79,10 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
   const projects: ProjectSelector = { ...DEFAULT_QUERY.projects, ...query.projects };
   const isPortfolio = q.queryType === QueryType.PortfolioMetrics;
   const isMetrics = isPortfolio || q.queryType === QueryType.ProjectMetrics;
-  const isViolations = q.queryType === QueryType.Violations;
+  const isEvents = q.queryType === QueryType.Events;
+  const eventKinds = q.events?.kinds?.length ? q.events.kinds : EVENT_KINDS.map((k) => k.value);
+  const showFindingFilter = q.queryType === QueryType.Findings || (isEvents && eventKinds.includes('finding'));
+  const isViolations = q.queryType === QueryType.Violations || (isEvents && eventKinds.includes('violation'));
   const isProjects = q.queryType === QueryType.Projects;
   const hasProjects = !isPortfolio && q.queryType !== QueryType.VulnerabilityMetrics;
   const format = q.format ?? 'table';
@@ -128,7 +133,17 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
             }}
           />
         </EditorField>
-        {q.queryType === QueryType.VulnerabilityMetrics ? null : isMetrics ? (
+        {q.queryType === QueryType.VulnerabilityMetrics ? null : isEvents ? (
+          <EditorField label="Events" width={60}>
+            <MultiCombobox
+              aria-label="Events"
+              options={EVENT_KINDS}
+              value={q.events?.kinds ?? []}
+              placeholder="All events"
+              onChange={(v) => update({ events: { kinds: v.map((o) => o.value) } })}
+            />
+          </EditorField>
+        ) : isMetrics ? (
           <>
             <EditorField label="Mode">
               <RadioButtonGroup options={modes} value={q.mode} onChange={(mode) => update({ mode })} />
@@ -152,14 +167,14 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
           </EditorField>
         )}
       </EditorRow>
-      {q.queryType === QueryType.Findings && (
+      {showFindingFilter && (
         <FindingFilterEditor filter={q.findings ?? {}} onChange={(findings) => update({ findings })} />
       )}
       {isViolations && (
         <ViolationFilterEditor
           filter={q.violations ?? {}}
           policies={withVariables(policyOptions)}
-          showGrouping={format === 'count'}
+          showGrouping={!isEvents && format === 'count'}
           onChange={(violations) => update({ violations })}
         />
       )}

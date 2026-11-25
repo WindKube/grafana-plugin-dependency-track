@@ -1,4 +1,4 @@
-import { DataQueryRequest, DataSourceInstanceSettings } from '@grafana/data';
+import { AnnotationQuery, DataQueryRequest, DataSourceInstanceSettings } from '@grafana/data';
 import { lastValueFrom } from 'rxjs';
 
 import { DataSource } from './datasource';
@@ -78,5 +78,19 @@ describe('variable support', () => {
     const res = await runVariableQuery(ds, query);
     expect(getVersions).toHaveBeenCalledWith('payments-api');
     expect(res.data[0].fields[1].values).toEqual(['1.4.0', '1.5.0']);
+  });
+});
+
+describe('annotations', () => {
+  const prepare = (anno: AnnotationQuery<DTQuery>) => newDatasource().annotations!.prepareAnnotation!(anno);
+
+  it('adds an events target to new annotations', () => {
+    const anno = { name: 'DT', enable: true, iconColor: 'red' };
+    expect(prepare(anno).target).toMatchObject({ refId: 'Anno', queryType: QueryType.Events });
+  });
+
+  it('returns the same annotation when it already has a target', () => {
+    const anno = { name: 'DT', enable: true, iconColor: 'red', target: { refId: 'Anno' } };
+    expect(prepare(anno)).toBe(anno);
   });
 });

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"slices"
 )
 
 type Type string
@@ -15,6 +16,7 @@ const (
 	TypeViolations       Type = "violations"
 	TypeProjects         Type = "projects"
 	TypeVulnerabilities  Type = "vulnerabilityMetrics"
+	TypeEvents           Type = "events"
 )
 
 type Format string
@@ -31,7 +33,20 @@ var (
 	AnalysisStates  = []string{"NOT_SET", "EXPLOITABLE", "IN_TRIAGE", "FALSE_POSITIVE", "NOT_AFFECTED", "RESOLVED"}
 	ViolationStates = []string{"FAIL", "WARN", "INFO"}
 	RiskTypes       = []string{"SECURITY", "LICENSE", "OPERATIONAL"}
+	EventKinds      = []string{EventBOMImport, EventFinding, EventViolation}
 )
+
+const (
+	EventBOMImport = "bomImport"
+	EventFinding   = "finding"
+	EventViolation = "violation"
+)
+
+type EventFilter struct {
+	Kinds []string `json:"kinds,omitempty"`
+}
+
+func (f EventFilter) SelectedKinds() []string { return orAll(f.Kinds, EventKinds) }
 
 type FindingFilter struct {
 	Severities        []string `json:"severities,omitempty"`
@@ -85,6 +100,7 @@ type Query struct {
 	Format     Format          `json:"format,omitempty"`
 	Findings   FindingFilter   `json:"findings"`
 	Violations ViolationFilter `json:"violations"`
+	Events     EventFilter     `json:"events"`
 }
 
 var DefaultMetrics = []string{"critical", "high", "medium", "low", "unassigned"}
@@ -132,6 +148,16 @@ func (q *Query) validate() error {
 		return q.Projects.validate()
 	case TypeVulnerabilities:
 		return nil
+	case TypeEvents:
+		for _, k := range q.Events.Kinds {
+			if !slices.Contains(EventKinds, k) {
+				return fmt.Errorf("unknown event kind %q", k)
+			}
+		}
+		if err := q.validateFilters(); err != nil {
+			return err
+		}
+		return q.Projects.validate()
 	default:
 		return fmt.Errorf("unknown query type %q", q.QueryType)
 	}

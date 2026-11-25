@@ -13,6 +13,17 @@ import (
 )
 
 func (d *Datasource) violations(ctx context.Context, q *query.Query) (data.Frames, error) {
+	projects, byProject, err := d.collectViolations(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	if q.Format == query.FormatCount {
+		return data.Frames{violationCounts(projects, byProject, q.Violations)}, nil
+	}
+	return data.Frames{violationTable(projects, byProject)}, nil
+}
+
+func (d *Datasource) collectViolations(ctx context.Context, q *query.Query) ([]dtrack.Project, map[string][]dtrack.Violation, error) {
 	f := q.Violations
 	projects, byProject, err := collectPerProject(ctx, d, q.Projects,
 		func(ctx context.Context) ([]dtrack.Violation, error) {
@@ -24,16 +35,12 @@ func (d *Datasource) violations(ctx context.Context, q *query.Query) (data.Frame
 		func(v dtrack.Violation) string { return v.Project.UUID },
 	)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-
 	for uuid, items := range byProject {
 		byProject[uuid] = slices.DeleteFunc(items, func(v dtrack.Violation) bool { return !matchViolation(v, f) })
 	}
-	if q.Format == query.FormatCount {
-		return data.Frames{violationCounts(projects, byProject, f)}, nil
-	}
-	return data.Frames{violationTable(projects, byProject)}, nil
+	return projects, byProject, nil
 }
 
 func matchViolation(v dtrack.Violation, f query.ViolationFilter) bool {

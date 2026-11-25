@@ -102,12 +102,15 @@ func (d *Datasource) query(ctx context.Context, dq backend.DataQuery) backend.Da
 		frames, err = d.projectInventory(ctx, q)
 	case query.TypeVulnerabilities:
 		frames, err = d.vulnerabilityMetrics(ctx, dq.TimeRange)
+	case query.TypeEvents:
+		frames, err = d.events(ctx, q, dq.TimeRange)
 	}
 	if err != nil {
 		return errorResponse(err)
 	}
 	for _, f := range frames {
 		f.RefID = dq.RefID
+		addLinks(f, d.settings.UIURL)
 	}
 	return backend.DataResponse{Frames: frames}
 }
