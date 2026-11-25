@@ -50,4 +50,21 @@ describe('ConfigEditor', () => {
       expect.objectContaining({ jsonData: { uiUrl: 'https://dtrack.example.com' } })
     );
   });
+
+  it('stores cache TTL and concurrency as numbers and clears them when emptied', () => {
+    const onChange = jest.fn();
+    const options = { ...baseOptions, jsonData: { ...baseOptions.jsonData, cacheTtl: 30 } };
+    render(<ConfigEditor options={options} onOptionsChange={onChange} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Expand section Additional settings' }));
+
+    fireEvent.change(screen.getByPlaceholderText('10'), { target: { value: '4' } });
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ jsonData: { uiUrl: 'http://dt-ui', cacheTtl: 30, maxConcurrentRequests: 4 } })
+    );
+
+    fireEvent.change(screen.getByDisplayValue('30'), { target: { value: '' } });
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ jsonData: { uiUrl: 'http://dt-ui', cacheTtl: undefined } })
+    );
+  });
 });

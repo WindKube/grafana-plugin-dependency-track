@@ -13,16 +13,20 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"golang.org/x/sync/singleflight"
 )
 
 const (
 	DefaultPageSize   = 100
 	DefaultMaxRetries = 3
 	// DefaultTimeout stays above the 60s cap Dependency-Track puts on portfolio finding queries.
-	DefaultTimeout    = 90 * time.Second
-	maxRetryWait      = 30 * time.Second
-	maxPages          = 10000
-	maxErrorBodyBytes = 4096
+	DefaultTimeout       = 90 * time.Second
+	DefaultMaxConcurrent = 10
+	DefaultCacheMaxBytes = 64 << 20
+	maxRetryWait         = 30 * time.Second
+	maxPages             = 10000
+	maxErrorBodyBytes    = 4096
 )
 
 type Options struct {
@@ -34,6 +38,11 @@ type Options struct {
 	MaxRetries int
 	RetryWait  time.Duration
 	UserAgent  string
+	// MaxConcurrent caps requests in flight to Dependency-Track across all queries.
+	MaxConcurrent int
+	// CacheTTL enables the response cache; zero disables it.
+	CacheTTL      time.Duration
+	CacheMaxBytes int
 }
 
 type Client struct {
@@ -44,6 +53,9 @@ type Client struct {
 	maxRetries int
 	retryWait  time.Duration
 	userAgent  string
+	sem        chan struct{}
+	cache      *responseCache
+	flight     singleflight.Group
 }
 
 // ErrUnexpectedResponse marks a 2xx response whose body is not the expected JSON, e.g. an HTML page.
@@ -113,6 +125,16 @@ func New(opts Options) (*Client, error) {
 	if c.retryWait <= 0 {
 		c.retryWait = 500 * time.Millisecond
 	}
+	if opts.MaxConcurrent <= 0 {
+		opts.MaxConcurrent = DefaultMaxConcurrent
+	}
+	c.sem = make(chan struct{}, opts.MaxConcurrent)
+	if opts.CacheTTL > 0 {
+		if opts.CacheMaxBytes <= 0 {
+			opts.CacheMaxBytes = DefaultCacheMaxBytes
+		}
+		c.cache = newResponseCache(opts.CacheTTL, opts.CacheMaxBytes)
+	}
 	return c, nil
 }
 
@@ -121,19 +143,91 @@ func (c *Client) BaseURL() string {
 }
 
 // get performs a GET against a path relative to /api and decodes the JSON body into out.
+// Identical concurrent requests share one round trip, and successful responses are cached
+// when a TTL is configured.
 func (c *Client) get(ctx context.Context, path string, query url.Values, out any) (http.Header, error) {
-	resp, err := c.do(ctx, path, query)
-	if err != nil {
-		return nil, err
+	key := path + "?" + query.Encode()
+	useCache := c.cache != nil && !cacheDisabled(ctx)
+
+	var res *cachedResponse
+	if useCache {
+		if hit, ok := c.cache.get(key); ok {
+			cacheRequests.WithLabelValues("hit").Inc()
+			res = hit
+		}
 	}
-	defer func() { _ = resp.Body.Close() }()
+	if res == nil {
+		ch := c.flight.DoChan(key, func() (any, error) {
+			// Shared by every waiter, so one cancelled caller must not fail the others.
+			// The HTTP client timeout still bounds the request.
+			body, header, err := c.fetch(context.WithoutCancel(ctx), path, query)
+			if err != nil {
+				return nil, err
+			}
+			if useCache {
+				c.cache.set(key, body, header)
+			}
+			return &cachedResponse{body: body, header: header}, nil
+		})
+		var r singleflight.Result
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case r = <-ch:
+		}
+		if useCache {
+			cacheRequests.WithLabelValues(map[bool]string{true: "shared", false: "miss"}[r.Shared]).Inc()
+		}
+		if r.Err != nil {
+			return nil, r.Err
+		}
+		res = r.Val.(*cachedResponse)
+	}
 
 	if out != nil {
-		if err := json.NewDecoder(resp.Body).Decode(out); err != nil {
+		if err := json.Unmarshal(res.body, out); err != nil {
 			return nil, fmt.Errorf("dependency-track: decoding %s: %w: %w", path, ErrUnexpectedResponse, err)
 		}
 	}
-	return resp.Header, nil
+	return res.header, nil
+}
+
+func (c *Client) fetch(ctx context.Context, path string, query url.Values) ([]byte, http.Header, error) {
+	start := time.Now()
+	status := "error"
+	defer func() {
+		requestDuration.WithLabelValues(endpoint(path), status).Observe(time.Since(start).Seconds())
+	}()
+
+	resp, err := c.do(ctx, path, query)
+	if err != nil {
+		var apiErr *APIError
+		if errors.As(err, &apiErr) {
+			status = strconv.Itoa(apiErr.StatusCode)
+		}
+		return nil, nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+	status = strconv.Itoa(resp.StatusCode)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, fmt.Errorf("dependency-track: reading %s: %w", path, err)
+	}
+	return body, resp.Header, nil
+}
+
+func (c *Client) roundTrip(req *http.Request) (*http.Response, error) {
+	select {
+	case c.sem <- struct{}{}:
+	case <-req.Context().Done():
+		return nil, req.Context().Err()
+	}
+	inFlight.Inc()
+	defer func() {
+		inFlight.Dec()
+		<-c.sem
+	}()
+	return c.http.Do(req)
 }
 
 func (c *Client) do(ctx context.Context, path string, query url.Values) (*http.Response, error) {
@@ -171,7 +265,7 @@ func (c *Client) do(ctx context.Context, path string, query url.Values) (*http.R
 			req.Header.Set("User-Agent", c.userAgent)
 		}
 
-		resp, err := c.http.Do(req)
+		resp, err := c.roundTrip(req)
 		if err != nil {
 			if ctx.Err() != nil {
 				return nil, ctx.Err()

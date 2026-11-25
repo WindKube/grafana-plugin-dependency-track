@@ -54,9 +54,11 @@ func NewDatasource(ctx context.Context, s backend.DataSourceInstanceSettings) (i
 		return nil, fmt.Errorf("http client: %w", err)
 	}
 	ds.client, err = dtrack.New(dtrack.Options{
-		BaseURL:    settings.URL,
-		APIKey:     settings.APIKey,
-		HTTPClient: ds.httpClient,
+		BaseURL:       settings.URL,
+		APIKey:        settings.APIKey,
+		HTTPClient:    ds.httpClient,
+		MaxConcurrent: settings.Concurrency(),
+		CacheTTL:      settings.CacheTTL(),
 	})
 	if err != nil {
 		ds.settingsErr = err
@@ -88,23 +90,25 @@ func (d *Datasource) query(ctx context.Context, dq backend.DataQuery) backend.Da
 		return backend.ErrDataResponse(backend.StatusBadRequest, err.Error())
 	}
 
-	var frames data.Frames
-	switch q.QueryType {
-	case query.TypePortfolioMetrics:
-		frames, err = d.portfolioMetrics(ctx, q, dq.TimeRange)
-	case query.TypeProjectMetrics:
-		frames, err = d.projectMetrics(ctx, q, dq.TimeRange)
-	case query.TypeFindings:
-		frames, err = d.findings(ctx, q)
-	case query.TypeViolations:
-		frames, err = d.violations(ctx, q)
-	case query.TypeProjects:
-		frames, err = d.projectInventory(ctx, q)
-	case query.TypeVulnerabilities:
-		frames, err = d.vulnerabilityMetrics(ctx, dq.TimeRange)
-	case query.TypeEvents:
-		frames, err = d.events(ctx, q, dq.TimeRange)
-	}
+	frames, err := observe(ctx, q, func(ctx context.Context) (data.Frames, error) {
+		switch q.QueryType {
+		case query.TypePortfolioMetrics:
+			return d.portfolioMetrics(ctx, q, dq.TimeRange)
+		case query.TypeProjectMetrics:
+			return d.projectMetrics(ctx, q, dq.TimeRange)
+		case query.TypeFindings:
+			return d.findings(ctx, q)
+		case query.TypeViolations:
+			return d.violations(ctx, q)
+		case query.TypeProjects:
+			return d.projectInventory(ctx, q)
+		case query.TypeVulnerabilities:
+			return d.vulnerabilityMetrics(ctx, dq.TimeRange)
+		case query.TypeEvents:
+			return d.events(ctx, q, dq.TimeRange)
+		}
+		return nil, nil
+	})
 	if err != nil {
 		return errorResponse(err)
 	}

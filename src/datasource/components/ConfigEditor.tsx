@@ -15,10 +15,14 @@ import { DTDataSourceOptions, DTSecureJsonData } from '../types';
 type Props = DataSourcePluginOptionsEditorProps<DTDataSourceOptions, DTSecureJsonData>;
 
 const API_KEY_METHOD = 'custom-api-key';
+const DEFAULT_CACHE_TTL = 60;
+const DEFAULT_MAX_CONCURRENT = 10;
 
 export function ConfigEditor({ options, onOptionsChange }: Props) {
   const { jsonData, secureJsonFields, secureJsonData } = options;
   const authProps = convertLegacyAuthProps({ config: options, onChange: onOptionsChange });
+  const setNumber = (key: 'cacheTtl' | 'maxConcurrentRequests', value: string) =>
+    onOptionsChange({ ...options, jsonData: { ...jsonData, [key]: value === '' ? undefined : Number(value) } });
 
   const apiKeyInput = (
     <Field
@@ -94,6 +98,35 @@ export function ConfigEditor({ options, onOptionsChange }: Props) {
       <Divider />
       <ConfigSection title="Additional settings" isCollapsible isInitiallyOpen={false}>
         <AdvancedHttpSettings config={options} onChange={onOptionsChange} />
+        <Field
+          label="Cache TTL"
+          description="Seconds to reuse Dependency-Track responses across panels, alerts and users. 0 disables caching."
+        >
+          <Input
+            id="config-editor-cache-ttl"
+            type="number"
+            min={0}
+            width={20}
+            suffix="s"
+            placeholder={String(DEFAULT_CACHE_TTL)}
+            value={jsonData.cacheTtl ?? ''}
+            onChange={(e) => setNumber('cacheTtl', e.currentTarget.value)}
+          />
+        </Field>
+        <Field
+          label="Max concurrent requests"
+          description="Upper bound on simultaneous requests to Dependency-Track from this data source."
+        >
+          <Input
+            id="config-editor-max-concurrent"
+            type="number"
+            min={1}
+            width={20}
+            placeholder={String(DEFAULT_MAX_CONCURRENT)}
+            value={jsonData.maxConcurrentRequests ?? ''}
+            onChange={(e) => setNumber('maxConcurrentRequests', e.currentTarget.value)}
+          />
+        </Field>
         {config.secureSocksDSProxyEnabled && (
           <SecureSocksProxySettings options={options} onOptionsChange={onOptionsChange} />
         )}

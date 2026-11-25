@@ -86,6 +86,8 @@ export interface DTDataSourceOptions extends DataSourceJsonData {
   uiUrl?: string;
   timeout?: number;
   enableSecureSocksProxy?: boolean;
+  cacheTtl?: number;
+  maxConcurrentRequests?: number;
 }
 
 export interface DTSecureJsonData {

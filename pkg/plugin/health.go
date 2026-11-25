@@ -27,8 +27,9 @@ func (d *Datasource) CheckHealth(ctx context.Context, _ *backend.CheckHealthRequ
 	if d.settingsErr != nil {
 		return healthError(d.settingsErr.Error(), nil), nil
 	}
-	// Save & test should answer quickly, so no retries and a short deadline.
-	ctx, cancel := context.WithTimeout(dtrack.WithoutRetries(ctx), healthTimeout)
+	// Save & test should answer quickly and reflect the current server: no retries, no cache
+	// and a short deadline.
+	ctx, cancel := context.WithTimeout(dtrack.WithoutCache(dtrack.WithoutRetries(ctx)), healthTimeout)
 	defer cancel()
 	logger := log.DefaultLogger.FromContext(ctx)
 

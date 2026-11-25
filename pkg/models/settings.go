@@ -5,8 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+)
+
+const (
+	DefaultCacheTTL      = 60 * time.Second
+	DefaultMaxConcurrent = 10
 )
 
 type Settings struct {
@@ -16,6 +22,23 @@ type Settings struct {
 	// CustomTimeout is true when jsonData sets Grafana's HTTP timeout; otherwise the plugin
 	// default applies instead of the SDK's 30s.
 	CustomTimeout bool `json:"-"`
+	// CacheTTLSeconds is nil when unset; 0 disables the cache.
+	CacheTTLSeconds *int `json:"cacheTtl,omitempty"`
+	MaxConcurrent   int  `json:"maxConcurrentRequests,omitempty"`
+}
+
+func (s *Settings) CacheTTL() time.Duration {
+	if s.CacheTTLSeconds == nil {
+		return DefaultCacheTTL
+	}
+	return time.Duration(max(*s.CacheTTLSeconds, 0)) * time.Second
+}
+
+func (s *Settings) Concurrency() int {
+	if s.MaxConcurrent <= 0 {
+		return DefaultMaxConcurrent
+	}
+	return s.MaxConcurrent
 }
 
 func LoadSettings(source backend.DataSourceInstanceSettings) (*Settings, error) {

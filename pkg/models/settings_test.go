@@ -2,6 +2,7 @@ package models
 
 import (
 	"testing"
+	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 )
@@ -36,6 +37,27 @@ func TestCustomTimeout(t *testing.T) {
 		}
 		if s.CustomTimeout != want {
 			t.Errorf("%s: CustomTimeout = %v", raw, s.CustomTimeout)
+		}
+	}
+}
+
+func TestCacheAndConcurrencyDefaults(t *testing.T) {
+	for _, tc := range []struct {
+		json        string
+		ttl         time.Duration
+		concurrency int
+	}{
+		{`{}`, DefaultCacheTTL, DefaultMaxConcurrent},
+		{`{"cacheTtl":0,"maxConcurrentRequests":3}`, 0, 3},
+		{`{"cacheTtl":300}`, 5 * time.Minute, DefaultMaxConcurrent},
+		{`{"cacheTtl":-5,"maxConcurrentRequests":-1}`, 0, DefaultMaxConcurrent},
+	} {
+		s, err := LoadSettings(backend.DataSourceInstanceSettings{JSONData: []byte(tc.json)})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if s.CacheTTL() != tc.ttl || s.Concurrency() != tc.concurrency {
+			t.Errorf("%s: ttl %v concurrency %d", tc.json, s.CacheTTL(), s.Concurrency())
 		}
 	}
 }
