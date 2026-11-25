@@ -1,6 +1,8 @@
 #!/bin/sh
 # Seeds a fresh Dependency-Track 5.x instance for local development and e2e tests.
+# Safe to re-run after a partial failure: existing teams, policies and projects are reused.
 set -eu
+set -o pipefail
 
 DT_URL="${DT_URL:-http://apiserver:8080}"
 ADMIN_PASSWORD="${DT_ADMIN_PASSWORD:-grafana-dev}"
@@ -9,6 +11,31 @@ SEED_DIR="$(cd "$(dirname "$0")" && pwd)"
 API="$DT_URL/api/v1"
 
 log() { echo "[seed] $*"; }
+fail() {
+  echo "[seed] ERROR: $*" >&2
+  exit 1
+}
+
+# require <description> <value>: fails when a lookup returned nothing.
+require() {
+  if [ -z "$2" ] || [ "$2" = "null" ]; then
+    fail "$1 is empty"
+  fi
+  printf '%s' "$2"
+}
+
+# wait_until <description> <attempts> <command...>: polls once per second.
+wait_until() {
+  desc="$1"
+  attempts="$2"
+  shift 2
+  i=0
+  until "$@"; do
+    i=$((i + 1))
+    [ "$i" -lt "$attempts" ] || fail "timed out waiting for $desc"
+    sleep 1
+  done
+}
 
 if [ -s "$OUT_DIR/api-key" ]; then
   log "already seeded, API key present in $OUT_DIR/api-key"
@@ -16,12 +43,14 @@ if [ -s "$OUT_DIR/api-key" ]; then
 fi
 
 log "waiting for $DT_URL"
-until curl -sf "$DT_URL/api/version" >/dev/null; do sleep 2; done
+dt_ready() { curl -sf "$DT_URL/api/version" >/dev/null; }
+wait_until "Dependency-Track to start" 300 dt_ready
 
 curl -sf -o /dev/null -X POST "$API/user/forceChangePassword" \
   --data-urlencode username=admin --data-urlencode password=admin \
   --data-urlencode "newPassword=$ADMIN_PASSWORD" --data-urlencode "confirmPassword=$ADMIN_PASSWORD" || true
-JWT="$(curl -sf -X POST "$API/user/login" --data-urlencode username=admin --data-urlencode "password=$ADMIN_PASSWORD")"
+JWT="$(curl -sf -X POST "$API/user/login" --data-urlencode username=admin --data-urlencode "password=$ADMIN_PASSWORD")" ||
+  fail "admin login failed"
 
 dt() {
   method="$1"
@@ -31,22 +60,36 @@ dt() {
 }
 
 log "creating team and API key"
-TEAM_UUID="$(dt PUT /team -d '{"name":"Grafana"}' | jq -r .uuid)"
+TEAM_UUID="$(dt GET '/team?pageSize=100' | jq -r '.[] | select(.name=="Grafana") | .uuid' | head -n1)"
+if [ -z "$TEAM_UUID" ]; then
+  TEAM_UUID="$(dt PUT /team -d '{"name":"Grafana"}' | jq -r .uuid)"
+fi
+TEAM_UUID="$(require "team uuid" "$TEAM_UUID")"
 for p in VIEW_PORTFOLIO VIEW_VULNERABILITY VIEW_POLICY_VIOLATION; do
   dt POST "/permission/$p/team/$TEAM_UUID" >/dev/null
 done
-API_KEY="$(dt PUT "/team/$TEAM_UUID/key" | jq -r .key)"
+API_KEY="$(require "API key" "$(dt PUT "/team/$TEAM_UUID/key" | jq -r .key)")"
 
 log "creating policies"
 create_policy() {
   name="$1" violation_state="$2" subject="$3" operator="$4" value="$5" violation_type="$6"
-  uuid="$(dt PUT /policy -d "{\"name\":\"$name\",\"operator\":\"ANY\",\"violationState\":\"$violation_state\"}" | jq -r .uuid)"
+  existing="$(dt GET '/policy?pageSize=100' | jq -c --arg n "$name" '.[] | select(.name==$n)')"
+  if [ -n "$existing" ]; then
+    uuid="$(echo "$existing" | jq -r .uuid)"
+    [ "$(echo "$existing" | jq '.policyConditions // [] | length')" -eq 0 ] || return 0
+  else
+    uuid="$(dt PUT /policy -d "{\"name\":\"$name\",\"operator\":\"ANY\",\"violationState\":\"$violation_state\"}" | jq -r .uuid)"
+  fi
+  uuid="$(require "policy $name uuid" "$uuid")"
   dt PUT "/policy/$uuid/condition" \
     -d "{\"subject\":\"$subject\",\"operator\":\"$operator\",\"value\":\"$value\",\"violationType\":\"$violation_type\"}" >/dev/null
 }
 create_policy "Banned packages" FAIL PACKAGE_URL MATCHES 'pkg:npm/(moment|marked)@.*' OPERATIONAL
 create_policy "Embedded databases" WARN PACKAGE_URL MATCHES 'pkg:maven/com.h2database/.*' OPERATIONAL
 create_policy "Python review" INFO PACKAGE_URL MATCHES 'pkg:pypi/.*' OPERATIONAL
+
+# event_done <token>: true once Dependency-Track has finished the work behind an event token.
+event_done() { [ "$(dt GET "/event/token/$1" | jq -r .processing)" = "false" ]; }
 
 log "uploading BOMs"
 for bom in "$SEED_DIR"/boms/*.cdx.json; do
@@ -59,7 +102,8 @@ for bom in "$SEED_DIR"/boms/*.cdx.json; do
   token="$(jq -n --arg n "$name" --arg v "$version" --argjson t "$tags" --argjson l "$latest" --rawfile b "$bom" \
     '{projectName: $n, projectVersion: $v, autoCreate: true, isLatest: $l, projectTags: $t, bom: ($b | @base64)}' |
     dt PUT /bom -d @- | jq -r .token)"
-  until [ "$(dt GET "/bom/token/$token" | jq -r .processing)" = "false" ]; do sleep 1; done
+  token="$(require "BOM upload token for $base" "$token")"
+  wait_until "BOM $base to be processed" 120 event_done "$token"
   log "  $name $version"
 done
 
@@ -70,6 +114,7 @@ add_vuln() {
   if [ -z "$vuln_uuid" ] || [ "$vuln_uuid" = "null" ]; then
     vuln_uuid="$(dt PUT /vulnerability -d "{\"vulnId\":\"$id\",\"source\":\"INTERNAL\",\"title\":\"$id in $purl\",\"description\":\"Seeded vulnerability for development.\",\"severity\":\"$severity\",\"cvssV3BaseScore\":$cvss}" | jq -r .uuid)"
   fi
+  vuln_uuid="$(require "vulnerability $id uuid" "$vuln_uuid")"
   dt GET "/component/identity?purl=$(jq -rn --arg p "$purl" '$p|@uri')&pageSize=100" | jq -r '.[].uuid' |
     while read -r component; do
       dt POST "/vulnerability/$vuln_uuid/component/$component" >/dev/null
@@ -90,11 +135,12 @@ add_vuln INT-2023-0012 LOW 3.7 'pkg:pypi/urllib3@1.26.4'
 add_vuln INT-2022-0013 LOW 2.0 'pkg:npm/moment@2.29.1'
 
 log "evaluating policies and refreshing metrics"
-dt GET '/project?pageSize=100' | jq -r '.[].uuid' | while read -r project; do
-  dt POST "/finding/project/$project/analyze" >/dev/null
+PROJECTS="$(dt GET '/project?pageSize=100' | jq -r '.[].uuid')"
+for project in $PROJECTS; do
+  token="$(require "analysis token for $project" "$(dt POST "/finding/project/$project/analyze" | jq -r .token)")"
+  wait_until "analysis of $project" 120 event_done "$token"
 done
-sleep 5
-dt GET '/project?pageSize=100' | jq -r '.[].uuid' | while read -r project; do
+for project in $PROJECTS; do
   dt GET "/metrics/project/$project/refresh" >/dev/null
 done
 dt GET /metrics/portfolio/refresh >/dev/null

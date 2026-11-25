@@ -206,7 +206,8 @@ jobs:
         run: pnpm run e2e
 
       - name: Docker logs
-        if: ${{ always() && steps.run-tests.outcome == 'failure' }}
+        # failure() also covers a seed that fails or hangs before Playwright runs.
+        if: ${{ failure() }}
         run: |
           docker logs windkube-dependencytrack-app >& grafana-server.log
           docker compose logs dt-seed dt-apiserver

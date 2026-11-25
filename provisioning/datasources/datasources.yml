@@ -9,8 +9,6 @@ datasources:
     orgId: 1
     version: 1
     editable: true
-    jsonData:
-      url: 'http://dt-apiserver:8080'
-      uiUrl: 'http://localhost:8082'
+    url: 'http://dt-apiserver:8080'
     secureJsonData:
       apiKey: '$__file{/seed-out/api-key}'
