@@ -19,7 +19,7 @@ func (d *Datasource) violations(ctx context.Context, q *query.Query) (data.Frame
 			return d.client.Violations(ctx, dtrack.ViolationFilter{Suppressed: f.IncludeSuppressed, ShowInactive: q.Projects.IncludeInactive})
 		},
 		func(ctx context.Context, uuid string) ([]dtrack.Violation, error) {
-			return d.client.ProjectViolations(ctx, uuid, dtrack.ViolationFilter{Suppressed: f.IncludeSuppressed})
+			return d.client.ProjectViolations(ctx, uuid, dtrack.ProjectViolationFilter{Suppressed: f.IncludeSuppressed})
 		},
 		func(v dtrack.Violation) string { return v.Project.UUID },
 	)
