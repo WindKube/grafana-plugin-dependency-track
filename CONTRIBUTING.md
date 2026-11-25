@@ -11,6 +11,7 @@
 | `examples/`       | Alert rule provisioning and Terraform examples                      |
 | `provisioning/`   | Provisioning used by the local Grafana                              |
 | `tests/`          | Playwright e2e tests                                                |
+| `scripts/`        | README and catalog screenshot capture                               |
 
 The data source is nested inside the app. Grafana discovers it from `dist/datasource/plugin.json`, and the backend binary is built to `dist/datasource/gpx_dependencytrack_<os>_<arch>`.
 
@@ -84,6 +85,17 @@ pnpm exec playwright install chromium
 docker compose up -d
 pnpm run e2e
 ```
+
+## Screenshots
+
+The screenshots in `src/img/screenshots` are used by the README and by `info.screenshots` in `src/plugin.json`. They are captured from the local environment by a Playwright script:
+
+```bash
+docker compose up -d
+pnpm run screenshots
+```
+
+Run it after UI changes, check the images, and commit them. The README links to them on `main` with absolute URLs, because the Grafana catalog renders the README outside the repository.
 
 ## Pull requests
 

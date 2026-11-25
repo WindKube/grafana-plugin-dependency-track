@@ -17,7 +17,17 @@
       { "name": "Source code", "url": "https://github.com/WindKube/grafana-plugin-dependency-track" },
       { "name": "License", "url": "https://github.com/WindKube/grafana-plugin-dependency-track/blob/main/LICENSE" }
     ],
-    "screenshots": [],
+    "screenshots": [
+      { "name": "Overview", "path": "img/screenshots/app-overview.png" },
+      { "name": "Project drill-down", "path": "img/screenshots/app-project.png" },
+      { "name": "Findings", "path": "img/screenshots/app-findings.png" },
+      { "name": "Policy violations", "path": "img/screenshots/app-violations.png" },
+      { "name": "SBOM freshness", "path": "img/screenshots/app-freshness.png" },
+      { "name": "Portfolio overview dashboard", "path": "img/screenshots/dashboard-portfolio-overview.png" },
+      { "name": "Data source configuration", "path": "img/screenshots/datasource-config.png" },
+      { "name": "Query editor", "path": "img/screenshots/query-editor.png" },
+      { "name": "Alert rule", "path": "img/screenshots/alert-rule.png" }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },

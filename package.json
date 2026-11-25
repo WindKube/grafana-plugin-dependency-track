@@ -10,6 +10,7 @@
     "lint": "eslint --cache .",
     "lint:fix": "pnpm run lint --fix && prettier --write --list-different .",
     "e2e": "playwright test",
+    "screenshots": "playwright test -c scripts/screenshots/playwright.config.ts",
     "server": "docker compose up --build",
     "sign": "sign-plugin"
   },
