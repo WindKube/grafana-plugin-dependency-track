@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -145,6 +147,8 @@ func TestProjectSelectors(t *testing.T) {
 		{"name regex latest", map[string]any{"mode": "name", "nameRegex": "^payments", "onlyLatest": true}, 1},
 		{"tag", map[string]any{"mode": "tag", "tag": "team-logistics"}, 2},
 		{"uuid", map[string]any{"mode": "uuid", "uuids": []string{"193995f2-2205-4b1b-ac0b-4e84e16eda35"}}, 1},
+		// payments-api 1.4.0 is not the latest version, but it was picked explicitly.
+		{"uuid ignores only latest", map[string]any{"mode": "uuid", "onlyLatest": true, "uuids": []string{"193995f2-2205-4b1b-ac0b-4e84e16eda35"}}, 1},
 		{"no match", map[string]any{"mode": "name", "nameRegex": "^nothing$"}, 0},
 	}
 	for _, tt := range tests {
@@ -164,6 +168,33 @@ func TestProjectSelectors(t *testing.T) {
 				t.Fatalf("got %d series, want %d", got, tt.projects)
 			}
 		})
+	}
+}
+
+func TestTagSelectorEscapesPathOnce(t *testing.T) {
+	var got string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = r.URL.EscapedPath()
+		w.Header().Set("X-Total-Count", "0")
+		_, _ = w.Write([]byte(`[]`))
+	}))
+	t.Cleanup(srv.Close)
+	inst, err := NewDatasource(context.Background(), backend.DataSourceInstanceSettings{
+		URL:                     srv.URL,
+		DecryptedSecureJSONData: map[string]string{"apiKey": "odt_test"},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	res := runQuery(t, inst.(*Datasource), map[string]any{
+		"queryType": "projectMetrics",
+		"projects":  map[string]any{"mode": "tag", "tag": "team a/b"},
+	})
+	if res.Error != nil {
+		t.Fatal(res.Error)
+	}
+	if want := "/api/v1/project/tag/team%20a%2Fb"; got != want {
+		t.Fatalf("requested %s, want %s", got, want)
 	}
 }
 

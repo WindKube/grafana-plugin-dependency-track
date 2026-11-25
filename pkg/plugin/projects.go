@@ -52,15 +52,18 @@ func (d *Datasource) resolveProjects(ctx context.Context, sel query.ProjectSelec
 	if sel.Mode == query.SelectName && sel.NameRegex != "" {
 		nameRe = regexp.MustCompile(sel.NameRegex)
 	}
+	// Explicitly picked projects are returned as-is, even when they are not the latest version
+	// or are inactive.
+	explicit := sel.Mode == query.SelectUUID
 	out := projects[:0]
 	for _, p := range projects {
 		if nameRe != nil && !nameRe.MatchString(p.Name) {
 			continue
 		}
-		if sel.OnlyLatest && !p.IsLatest {
+		if !explicit && sel.OnlyLatest && !p.IsLatest {
 			continue
 		}
-		if !sel.IncludeInactive && !p.Active {
+		if !explicit && !sel.IncludeInactive && !p.Active {
 			continue
 		}
 		out = append(out, p)
