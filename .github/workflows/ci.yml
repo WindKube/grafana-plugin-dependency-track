@@ -116,11 +116,14 @@ jobs:
           ARCHIVE: ${{ steps.metadata.outputs.archive }}
           PLUGIN_ID: ${{ steps.metadata.outputs.plugin-id }}
 
-      - name: Check plugin.json
+      # Fails on errors only; warnings such as "unsigned plugin" are expected before the first release.
+      - name: Validate plugin
         run: |
+          git archive --format=tar HEAD | (mkdir -p "$RUNNER_TEMP/src" && tar -x -C "$RUNNER_TEMP/src")
           docker run --pull=always \
             -v $PWD/${ARCHIVE}:/archive.zip \
-            grafana/plugin-validator-cli -analyzer=metadatavalid /archive.zip
+            -v $RUNNER_TEMP/src:/src \
+            grafana/plugin-validator-cli -sourceCodeUri file:///src /archive.zip
         env:
           ARCHIVE: ${{ steps.metadata.outputs.archive }}
 

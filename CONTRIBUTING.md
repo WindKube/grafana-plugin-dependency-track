@@ -87,6 +87,22 @@ pnpm run e2e
 
 ## Pull requests
 
-CI runs typecheck, lint, jest, golangci-lint, Go tests, the backend build, the Grafana API compatibility check and Playwright e2e tests against the supported Grafana versions. Keep it green.
+CI runs typecheck, lint, jest, golangci-lint, Go tests, the backend build, the full plugin validator, the Grafana API compatibility check and Playwright e2e tests against the supported Grafana versions. Keep it green.
 
 Dependencies are updated by Renovate.
+
+## Releasing
+
+Releases are built, signed and attested by `.github/workflows/release.yml`. Signing needs a Grafana Cloud access policy token with the `plugins:write` scope in the `GRAFANA_ACCESS_POLICY_TOKEN` repository secret.
+
+1. Bump `version` in `package.json` and move the `Unreleased` entries in `CHANGELOG.md` under that version.
+2. Merge to `main`, then tag the commit: `git tag v1.0.0 && git push origin v1.0.0`.
+3. The workflow creates a draft GitHub release with the signed archive and its `.sha1`. Publish it, then submit both asset links under **My Plugins → Submit Plugin** on grafana.com.
+
+To run the plugin validator locally, build the archive the way CI does and run:
+
+```bash
+docker run --pull=always -v $PWD/plugin.zip:/archive.zip -v $PWD:/src grafana/plugin-validator-cli -sourceCodeUri file:///src /archive.zip
+```
+
+Backend binaries in the archive must have mode `0755`. A umask of `002` produces `0775`, which the validator rejects.
