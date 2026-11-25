@@ -47,7 +47,27 @@ Build the frontend and the backend for your Docker platform first, then:
 docker compose up --build
 ```
 
-Grafana runs on http://localhost:3000 with anonymous admin access. Use `GRAFANA_VERSION` to pick another Grafana version.
+This starts:
+
+| Service        | URL                   | Notes                                      |
+| -------------- | --------------------- | ------------------------------------------ |
+| `grafana`      | http://localhost:3000 | Anonymous admin, plugin from `dist/`       |
+| `dt-apiserver` | http://localhost:8081 | Dependency-Track 5.x API server            |
+| `dt-frontend`  | http://localhost:8082 | Dependency-Track UI, `admin`/`grafana-dev` |
+| `dt-postgres`  | –                     | Dependency-Track database                  |
+| `dt-seed`      | –                     | One-shot seed, see below                   |
+
+`dev/seed/seed.sh` runs once against a fresh Dependency-Track:
+
+- sets the admin password to `grafana-dev`;
+- creates a `Grafana` team with `VIEW_PORTFOLIO`, `VIEW_VULNERABILITY` and `VIEW_POLICY_VIOLATION`, plus an API key;
+- creates three policies (FAIL, WARN and INFO);
+- uploads the CycloneDX BOMs from `dev/seed/boms` (tags come from the `seed:tag` metadata properties);
+- attaches internal vulnerabilities of every severity to some components, then evaluates policies and refreshes metrics.
+
+The API key is written to the `dt-seed` volume, and `provisioning/datasources/datasources.yml` reads it with `$__file{}`.
+
+Overrides: use `GRAFANA_VERSION` to pick another Grafana version and `DT_VERSION` for another Dependency-Track version. To start over with a fresh Dependency-Track, run `docker compose down -v`.
 
 ## E2E tests
 

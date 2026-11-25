@@ -6,3 +6,61 @@ services:
     build:
       args:
         grafana_image: ${GRAFANA_IMAGE:-grafana}
+    depends_on:
+      dt-seed:
+        condition: service_completed_successfully
+    volumes:
+      - dt-seed:/seed-out:ro
+
+  dt-apiserver:
+    image: dependencytrack/apiserver:${DT_VERSION:-5.2.2}
+    depends_on:
+      dt-postgres:
+        condition: service_healthy
+    environment:
+      DT_DATASOURCE_URL: jdbc:postgresql://dt-postgres:5432/dtrack
+      DT_DATASOURCE_USERNAME: dtrack
+      DT_DATASOURCE_PASSWORD: dtrack
+      DT_TELEMETRY_SUBMISSION_DEFAULT_ENABLED: 'false'
+    ports:
+      - 127.0.0.1:8081:8080
+    deploy:
+      resources:
+        limits:
+          memory: 1536m
+
+  dt-frontend:
+    image: dependencytrack/frontend:${DT_VERSION:-5.2.2}
+    environment:
+      API_BASE_URL: http://localhost:8081
+    ports:
+      - 127.0.0.1:8082:8080
+
+  dt-postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: dtrack
+      POSTGRES_USER: dtrack
+      POSTGRES_PASSWORD: dtrack
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dtrack -d dtrack']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - dt-postgres:/var/lib/postgresql
+
+  dt-seed:
+    image: alpine:3
+    depends_on:
+      - dt-apiserver
+    environment:
+      DT_URL: http://dt-apiserver:8080
+    command: ['sh', '-c', 'apk add --no-cache -q curl jq && /seed/seed.sh']
+    volumes:
+      - ./dev/seed:/seed:ro
+      - dt-seed:/seed-out
+
+volumes:
+  dt-postgres: {}
+  dt-seed: {}

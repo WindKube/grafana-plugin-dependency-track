@@ -209,6 +209,7 @@ jobs:
         if: ${{ always() && steps.run-tests.outcome == 'failure' }}
         run: |
           docker logs windkube-dependencytrack-app >& grafana-server.log
+          docker compose logs dt-seed dt-apiserver
 
       - name: Stop grafana docker
         run: docker compose down

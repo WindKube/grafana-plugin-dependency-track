@@ -5,11 +5,12 @@ datasources:
     uid: dependencytrack
     type: 'windkube-dependencytrack-datasource'
     access: proxy
-    isDefault: false
+    isDefault: true
     orgId: 1
     version: 1
     editable: true
     jsonData:
-      path: '/resources'
+      url: 'http://dt-apiserver:8080'
+      uiUrl: 'http://localhost:8082'
     secureJsonData:
-      apiKey: 'api-key'
+      apiKey: '$__file{/seed-out/api-key}'
