@@ -59,6 +59,14 @@ func fixtureDT(t *testing.T) *Datasource {
 				}
 			}
 			http.NotFound(w, r)
+		case p == "/v1/tag":
+			w.Header().Set("X-Total-Count", "8")
+			_, _ = w.Write(readFixture(t, "tags"))
+		case p == "/v1/policy":
+			http.Error(w, "forbidden", http.StatusForbidden)
+		case p == "/v1/violation":
+			w.Header().Set("X-Total-Count", "8")
+			_, _ = w.Write(readFixture(t, "violations"))
 		case p == "/v1/metrics/portfolio/current":
 			_, _ = w.Write(readFixture(t, "portfolio_current"))
 		case strings.HasPrefix(p, "/v1/metrics/portfolio/since/"):

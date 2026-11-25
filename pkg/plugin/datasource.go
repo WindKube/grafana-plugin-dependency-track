@@ -17,11 +17,13 @@ import (
 
 var (
 	_ backend.QueryDataHandler      = (*Datasource)(nil)
+	_ backend.CallResourceHandler   = (*Datasource)(nil)
 	_ backend.CheckHealthHandler    = (*Datasource)(nil)
 	_ instancemgmt.InstanceDisposer = (*Datasource)(nil)
 )
 
 type Datasource struct {
+	backend.CallResourceHandler
 	settings    *models.Settings
 	settingsErr error
 	client      *dtrack.Client
@@ -34,6 +36,7 @@ func NewDatasource(ctx context.Context, s backend.DataSourceInstanceSettings) (i
 		return nil, err
 	}
 	ds := &Datasource{settings: settings}
+	ds.CallResourceHandler = ds.newResourceHandler()
 	if ds.settingsErr = settings.Validate(); ds.settingsErr != nil {
 		return ds, nil
 	}

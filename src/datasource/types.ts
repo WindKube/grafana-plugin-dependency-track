@@ -48,3 +48,19 @@ export interface DTDataSourceOptions extends DataSourceJsonData {
 export interface DTSecureJsonData {
   apiKey?: string;
 }
+
+export type VariableQueryType = 'projects' | 'versions' | 'tags' | 'classifiers' | 'policies';
+
+export interface DTVariableQuery extends DataQuery {
+  type: VariableQueryType;
+  project?: string;
+  onlyLatest?: boolean;
+}
+
+export interface ProjectOption {
+  uuid: string;
+  name: string;
+  version: string;
+  isLatest: boolean;
+  tags: string[];
+}

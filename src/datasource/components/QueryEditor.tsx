@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { EditorField, EditorRow, EditorRows } from '@grafana/plugin-ui';
+import { getTemplateSrv } from '@grafana/runtime';
 import { Combobox, ComboboxOption, InlineSwitch, Input, MultiCombobox, RadioButtonGroup } from '@grafana/ui';
 import { DataSource } from '../datasource';
 import { metricOptions } from '../metrics';
@@ -15,6 +16,7 @@ import {
 } from '../types';
 
 type Props = QueryEditorProps<DataSource, DTQuery, DTDataSourceOptions>;
+type Options = Array<ComboboxOption<string>>;
 
 const queryTypes: Array<ComboboxOption<QueryType>> = [
   { value: QueryType.PortfolioMetrics, label: 'Portfolio metrics' },
@@ -31,13 +33,51 @@ const selectorModes: Array<ComboboxOption<SelectorMode>> = [
   { value: 'name', label: 'Name regex' },
   { value: 'tag', label: 'Tag' },
   { value: 'classifier', label: 'Classifier' },
-  { value: 'uuid', label: 'UUID' },
+  { value: 'uuid', label: 'Pick projects' },
 ];
 
-export function QueryEditor({ query, onChange, onRunQuery }: Props) {
+function useOptions(load: () => Promise<Options>, enabled: boolean): Options {
+  const [options, setOptions] = useState<Options>([]);
+  useEffect(() => {
+    if (enabled) {
+      load()
+        .then(setOptions)
+        .catch(() => setOptions([]));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
+  return options;
+}
+
+function withVariables(options: Options): Options {
+  const variables = getTemplateSrv()
+    .getVariables()
+    .map((v) => '$' + v.name);
+  return [...variables.map((name) => ({ value: name, group: 'Variables' })), ...options];
+}
+
+export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) {
   const q = { ...DEFAULT_QUERY, ...query };
   const projects: ProjectSelector = { ...DEFAULT_QUERY.projects, ...query.projects };
   const isPortfolio = q.queryType === QueryType.PortfolioMetrics;
+
+  const tagOptions = useOptions(
+    async () => (await datasource.getTags()).map((value) => ({ value })),
+    !isPortfolio && projects.mode === 'tag'
+  );
+  const classifierOptions = useOptions(
+    async () => (await datasource.getClassifiers()).map((value) => ({ value })),
+    !isPortfolio && projects.mode === 'classifier'
+  );
+  const projectOptions = useOptions(
+    async () =>
+      (await datasource.getProjects()).map((p) => ({
+        value: p.uuid,
+        label: `${p.name} ${p.version}`,
+        description: p.isLatest ? 'latest' : undefined,
+      })),
+    !isPortfolio && projects.mode === 'uuid'
+  );
 
   const update = (patch: Partial<DTQuery>) => {
     onChange({ ...query, ...patch });
@@ -86,7 +126,7 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
             />
           </EditorField>
           {projects.mode === 'name' && (
-            <EditorField label="Name regex">
+            <EditorField label="Name regex" tooltip="Multi-value variables are expanded to an alternation.">
               <Input
                 aria-label="Name regex"
                 width={30}
@@ -98,40 +138,36 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
           )}
           {projects.mode === 'tag' && (
             <EditorField label="Tag">
-              <Input
+              <Combobox
                 aria-label="Tag"
                 width={30}
-                defaultValue={projects.tag}
-                onBlur={(e) => updateProjects({ tag: e.currentTarget.value })}
+                createCustomValue
+                options={withVariables(tagOptions)}
+                value={projects.tag ?? null}
+                onChange={(v) => updateProjects({ tag: v.value })}
               />
             </EditorField>
           )}
           {projects.mode === 'classifier' && (
             <EditorField label="Classifier">
-              <Input
+              <Combobox
                 aria-label="Classifier"
                 width={30}
-                defaultValue={projects.classifier}
-                placeholder="APPLICATION"
-                onBlur={(e) => updateProjects({ classifier: e.currentTarget.value })}
+                createCustomValue
+                options={withVariables(classifierOptions)}
+                value={projects.classifier ?? null}
+                onChange={(v) => updateProjects({ classifier: v.value })}
               />
             </EditorField>
           )}
           {projects.mode === 'uuid' && (
-            <EditorField label="UUIDs">
-              <Input
-                aria-label="UUIDs"
-                width={60}
-                defaultValue={projects.uuids?.join(',')}
-                placeholder="comma-separated project UUIDs"
-                onBlur={(e) =>
-                  updateProjects({
-                    uuids: e.currentTarget.value
-                      .split(',')
-                      .map((s) => s.trim())
-                      .filter(Boolean),
-                  })
-                }
+            <EditorField label="Projects" width={60}>
+              <MultiCombobox
+                aria-label="Projects"
+                createCustomValue
+                options={withVariables(projectOptions)}
+                value={projects.uuids ?? []}
+                onChange={(v) => updateProjects({ uuids: v.map((o) => o.value) })}
               />
             </EditorField>
           )}

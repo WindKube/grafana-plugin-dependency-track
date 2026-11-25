@@ -229,3 +229,14 @@ func setFloat(q url.Values, key string, v *float64) {
 func formatDate(t time.Time) string {
 	return t.UTC().Format("20060102")
 }
+
+type Policy struct {
+	UUID           string `json:"uuid"`
+	Name           string `json:"name"`
+	ViolationState string `json:"violationState"`
+}
+
+// Policies requires POLICY_MANAGEMENT; view-only keys get 403.
+func (c *Client) Policies(ctx context.Context) ([]Policy, error) {
+	return getAll[Policy](ctx, c, "/v1/policy", nil)
+}
