@@ -190,7 +190,13 @@ type ViolationFilter struct {
 	Policy         string
 }
 
-func (c *Client) ProjectViolations(ctx context.Context, uuid string, f ViolationFilter) ([]Violation, error) {
+// ProjectViolationFilter holds the only filter /v1/violation/project/{uuid} supports; filter
+// by state, risk type or policy client-side.
+type ProjectViolationFilter struct {
+	Suppressed bool
+}
+
+func (c *Client) ProjectViolations(ctx context.Context, uuid string, f ProjectViolationFilter) ([]Violation, error) {
 	q := url.Values{}
 	setBool(q, "suppressed", f.Suppressed)
 	return getAll[Violation](ctx, c, "/v1/violation/project/"+url.PathEscape(uuid), q)

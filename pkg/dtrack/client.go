@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"math/rand/v2"
+	"net"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -17,7 +18,9 @@ import (
 const (
 	DefaultPageSize   = 100
 	DefaultMaxRetries = 3
-	DefaultTimeout    = 30 * time.Second
+	// DefaultTimeout stays above the 60s cap Dependency-Track puts on portfolio finding queries.
+	DefaultTimeout    = 90 * time.Second
+	maxRetryWait      = 30 * time.Second
 	maxPages          = 10000
 	maxErrorBodyBytes = 4096
 )
@@ -124,8 +127,14 @@ func (c *Client) get(ctx context.Context, path string, query url.Values, out any
 }
 
 func (c *Client) do(ctx context.Context, path string, query url.Values) (*http.Response, error) {
+	// path is already escaped by the callers; keep both forms so url.URL doesn't escape it again.
 	u := *c.baseURL
-	u.Path = u.Path + "/api" + path
+	u.RawPath = c.baseURL.EscapedPath() + "/api" + path
+	unescaped, err := url.PathUnescape(u.RawPath)
+	if err != nil {
+		return nil, fmt.Errorf("dependency-track: invalid path %q: %w", path, err)
+	}
+	u.Path = unescaped
 	u.RawQuery = query.Encode()
 
 	var lastErr error
@@ -154,6 +163,10 @@ func (c *Client) do(ctx context.Context, path string, query url.Values) (*http.R
 				return nil, ctx.Err()
 			}
 			lastErr = fmt.Errorf("dependency-track: GET %s: %w", path, err)
+			// A timed-out query is likely to time out again and only adds load on the server.
+			if isTimeout(err) {
+				return nil, lastErr
+			}
 			continue
 		}
 		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
@@ -175,8 +188,13 @@ func retryable(status int) bool {
 		status == http.StatusServiceUnavailable || status == http.StatusGatewayTimeout
 }
 
+func isTimeout(err error) bool {
+	var netErr net.Error
+	return errors.Is(err, context.DeadlineExceeded) || (errors.As(err, &netErr) && netErr.Timeout())
+}
+
 func (c *Client) backoff(attempt int) time.Duration {
-	d := c.retryWait << (attempt - 1)
+	d := min(c.retryWait<<min(attempt-1, 10), maxRetryWait)
 	return d + rand.N(d/2+1)
 }
 

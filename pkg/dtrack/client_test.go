@@ -208,7 +208,11 @@ func TestCWEUnmarshal(t *testing.T) {
 	}
 }
 
-const fixtureProject = "193995f2-2205-4b1b-ac0b-4e84e16eda35"
+const (
+	fixtureProject = "193995f2-2205-4b1b-ac0b-4e84e16eda35"
+	// web-frontend 2.3.0, which has two FAIL violations, one with an APPROVED analysis.
+	fixtureViolationProject = "51abccf1-b95d-49c6-b791-32fce5fd1ffe"
+)
 
 func fixtureServer(t *testing.T) *Client {
 	t.Helper()
@@ -224,8 +228,7 @@ func fixtureServer(t *testing.T) *Client {
 		"/api/v1/finding/project/" + fixtureProject:                     "project_findings",
 		"/api/v1/finding":   "findings",
 		"/api/v1/violation": "violations",
-		"/api/v1/violation/project/" + fixtureProject: "project_violations",
-		"/api/v1/metrics/vulnerability":               "vulnerability_metrics",
+		"/api/v1/violation/project/" + fixtureViolationProject: "project_violations",
 	}
 	return newTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		name, ok := routes[r.URL.Path]
@@ -343,14 +346,77 @@ func TestFixtures(t *testing.T) {
 		t.Errorf("violation states: %v", states)
 	}
 
-	pv, err := c.ProjectViolations(ctx, fixtureProject, ViolationFilter{})
+	pv, err := c.ProjectViolations(ctx, fixtureViolationProject, ProjectViolationFilter{})
 	must(t, err)
-	if len(pv) != 0 {
-		t.Errorf("got %d project violations", len(pv))
+	if len(pv) != 2 {
+		t.Fatalf("got %d project violations", len(pv))
 	}
+	var analysed int
+	for _, v := range pv {
+		if v.PolicyCondition.Policy.ViolationState != "FAIL" || v.Project.UUID != fixtureViolationProject {
+			t.Errorf("unexpected violation %+v", v)
+		}
+		if v.Analysis != nil {
+			analysed++
+			if v.Analysis.State != "APPROVED" || v.Analysis.IsSuppressed {
+				t.Errorf("analysis %+v", v.Analysis)
+			}
+		}
+	}
+	if analysed != 1 {
+		t.Errorf("got %d analysed violations, want 1", analysed)
+	}
+}
 
-	_, err = c.VulnerabilityMetrics(ctx)
+// The dev instance has no vulnerability mirror, so this payload follows the documented
+// /v1/metrics/vulnerability shape instead of a recording.
+func TestVulnerabilityMetricsDecoding(t *testing.T) {
+	c := newTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`[{"year":2026,"month":10,"count":3512,"measuredAt":1795611053247},{"year":2026,"month":11,"count":1204,"measuredAt":1795611053247}]`))
+	}))
+	m, err := c.VulnerabilityMetrics(context.Background())
 	must(t, err)
+	if len(m) != 2 || m[0].Year != 2026 || m[0].Month != 10 || m[0].Count != 3512 || m[1].Measured.IsZero() {
+		t.Fatalf("got %+v", m)
+	}
+}
+
+func TestPathSegmentsAreEscapedOnce(t *testing.T) {
+	var got string
+	c := newTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = r.URL.EscapedPath()
+		w.Header().Set("X-Total-Count", "0")
+		_, _ = w.Write([]byte(`[]`))
+	}))
+	_, err := c.Projects(context.Background(), ProjectFilter{Tag: "team a/b%"})
+	must(t, err)
+	if want := "/api/v1/project/tag/team%20a%2Fb%25"; got != want {
+		t.Fatalf("requested %s, want %s", got, want)
+	}
+}
+
+func TestTimeoutsAreNotRetried(t *testing.T) {
+	var requests atomic.Int32
+	c := newTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
+		time.Sleep(200 * time.Millisecond)
+	}), func(o *Options) { o.HTTPClient = &http.Client{Timeout: 20 * time.Millisecond} })
+	if _, err := c.Version(context.Background()); err == nil {
+		t.Fatal("expected a timeout")
+	}
+	if requests.Load() != 1 {
+		t.Fatalf("got %d requests, want 1", requests.Load())
+	}
+}
+
+func TestBackoffIsCapped(t *testing.T) {
+	c, err := New(Options{BaseURL: "http://dt", MaxRetries: 40, RetryWait: time.Second})
+	must(t, err)
+	for attempt := 1; attempt <= 40; attempt++ {
+		if d := c.backoff(attempt); d <= 0 || d > maxRetryWait*3/2+1 {
+			t.Fatalf("backoff(%d) = %v", attempt, d)
+		}
+	}
 }
 
 func must(t *testing.T, err error) {
