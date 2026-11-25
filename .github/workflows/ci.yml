@@ -123,7 +123,7 @@ jobs:
           docker run --pull=always \
             -v $PWD/${ARCHIVE}:/archive.zip \
             -v $RUNNER_TEMP/src:/src \
-            grafana/plugin-validator-cli -sourceCodeUri file:///src /archive.zip
+            grafana/plugin-validator-cli -config /src/.github/plugin-validator.yaml -sourceCodeUri file:///src /archive.zip
         env:
           ARCHIVE: ${{ steps.metadata.outputs.archive }}
 
