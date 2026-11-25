@@ -111,6 +111,25 @@ test('alert rule on stale SBOMs', async ({ request }) => {
   expect(stale.every((r) => r.value === 0)).toBeTruthy();
 });
 
+test('example alert rules are provisioned and evaluate', async ({ request }) => {
+  const res = await request.get('/api/v1/provisioning/alert-rules');
+  expect(res.ok()).toBeTruthy();
+  const rules: Array<{ uid: string; condition: string; data: unknown[] }> = await res.json();
+  const firing = async (uid: string, label: string) => {
+    const rule = rules.find((r) => r.uid === uid);
+    expect(rule, uid).toBeDefined();
+    const evaluated = await request.post('/api/v1/eval', { data: { condition: rule!.condition, data: rule!.data } });
+    expect(evaluated.ok()).toBeTruthy();
+    const results = series((await evaluated.json()).results.C.frames);
+    return results.filter((r) => r.value === 1).map((r) => r.labels[label] ?? 'portfolio');
+  };
+
+  expect(await firing('dt-critical-findings', 'project')).toEqual(['inventory-service']);
+  expect(await firing('dt-known-exploited', 'metric')).toEqual([]);
+  expect(await firing('dt-policy-fail', 'policy')).toEqual(['Banned packages']);
+  expect(await firing('dt-stale-sbom', 'project')).toEqual([]);
+});
+
 test('alert rule on critical findings count', async ({ request }) => {
   const res = await request.post('/api/v1/eval', {
     data: rule({

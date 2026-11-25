@@ -11,6 +11,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - dt-seed:/seed-out:ro
+      - ./examples/alerting:/etc/grafana/provisioning/alerting:ro
 
   dt-apiserver:
     image: dependencytrack/apiserver:${DT_VERSION:-5.2.2}

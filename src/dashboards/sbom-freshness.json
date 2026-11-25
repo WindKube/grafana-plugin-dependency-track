@@ -1,0 +1,186 @@
+{
+  "revision": 1,
+  "uid": "dt-sbom-freshness",
+  "title": "Dependency-Track / SBOM freshness",
+  "tags": ["dependency-track"],
+  "editable": true,
+  "schemaVersion": 41,
+  "time": { "from": "now-90d", "to": "now" },
+  "refresh": "",
+  "links": [
+    {
+      "title": "Dependency-Track",
+      "type": "dashboards",
+      "tags": ["dependency-track"],
+      "asDropdown": true,
+      "includeVars": false,
+      "keepTime": true
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Data source",
+        "type": "datasource",
+        "query": "windkube-dependencytrack-datasource",
+        "current": {}
+      },
+      {
+        "name": "project",
+        "label": "Project",
+        "type": "query",
+        "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+        "query": { "refId": "project", "type": "projects", "onlyLatest": true },
+        "refresh": 1,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": { "text": ["All"], "value": ["$__all"] }
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "Annotations & Alerts",
+        "builtIn": 1,
+        "type": "dashboard",
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)"
+      },
+      {
+        "name": "BOM imports",
+        "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+        "enable": true,
+        "iconColor": "green",
+        "target": {
+          "refId": "Anno",
+          "queryType": "events",
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true },
+          "events": { "kinds": ["bomImport"] }
+        }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "table",
+      "title": "SBOM freshness",
+      "description": "Latest version of each project. Green: imported in the last 7 days, yellow: in the last 30 days.",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 8 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "projects",
+          "format": "table",
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": { "showHeader": true, "cellHeight": "sm", "sortBy": [{ "displayName": "BOM age", "desc": true }] },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Active": true,
+              "Latest": true,
+              "Risk score": true,
+              "Critical": true,
+              "High": true,
+              "Medium": true,
+              "Low": true,
+              "Unassigned": true,
+              "Policy violations (fail)": true
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".* UUID$" },
+            "properties": [{ "id": "custom.hidden", "value": true }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "BOM age" },
+            "properties": [
+              { "id": "custom.cellOptions", "value": { "type": "color-background", "mode": "basic" } },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    { "color": "green", "value": null },
+                    { "color": "yellow", "value": 604800 },
+                    { "color": "red", "value": 2592000 }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  { "type": "special", "options": { "match": "null", "result": { "text": "Never", "color": "red" } } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "type": "bargauge",
+      "title": "Components by project",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 9 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "projectMetrics",
+          "mode": "current",
+          "metrics": ["components"],
+          "projects": { "mode": "name", "nameRegex": "^$project$", "onlyLatest": true }
+        }
+      ],
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "namePlacement": "left",
+        "showUnfilled": true,
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "min": 0,
+          "displayName": "${__field.labels.project}",
+          "color": { "mode": "fixed", "fixedColor": "blue" }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Vulnerability database",
+      "description": "Vulnerabilities published per month in the Dependency-Track mirror. Empty when no mirror is enabled.",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 9 },
+      "datasource": { "type": "windkube-dependencytrack-datasource", "uid": "${datasource}" },
+      "targets": [{ "refId": "A", "queryType": "vulnerabilityMetrics" }],
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "single" } },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "purple" },
+          "custom": { "drawStyle": "bars", "fillOpacity": 60 }
+        },
+        "overrides": []
+      }
+    }
+  ]
+}

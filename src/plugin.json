@@ -29,7 +29,12 @@
       "addToNav": true,
       "defaultNav": true
     },
-    { "type": "datasource", "name": "Dependency-Track", "path": "datasource/plugin.json" }
+    { "type": "datasource", "name": "Dependency-Track", "path": "datasource/plugin.json" },
+    { "type": "dashboard", "name": "Portfolio overview", "path": "dashboards/portfolio-overview.json" },
+    { "type": "dashboard", "name": "Project", "path": "dashboards/project.json" },
+    { "type": "dashboard", "name": "Findings", "path": "dashboards/findings.json" },
+    { "type": "dashboard", "name": "Policy violations", "path": "dashboards/policy-violations.json" },
+    { "type": "dashboard", "name": "SBOM freshness", "path": "dashboards/sbom-freshness.json" }
   ],
   "dependencies": {
     "grafanaDependency": ">=13.0.0",

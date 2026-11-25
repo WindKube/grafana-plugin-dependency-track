@@ -46,3 +46,9 @@ ci/
 .idea
 
 .eslintcache
+
+# Terraform example
+.terraform/
+.terraform.lock.hcl
+*.tfstate*
+*.tfvars

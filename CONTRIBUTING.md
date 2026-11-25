@@ -7,6 +7,8 @@
 | `src/`            | App plugin `windkube-dependencytrack-app` (Scenes pages)            |
 | `src/datasource/` | Nested data source `windkube-dependencytrack-datasource` (frontend) |
 | `pkg/`            | Data source backend (Go)                                            |
+| `src/dashboards/` | Dashboards bundled with the app                                     |
+| `examples/`       | Alert rule provisioning and Terraform examples                      |
 | `provisioning/`   | Provisioning used by the local Grafana                              |
 | `tests/`          | Playwright e2e tests                                                |
 
@@ -68,6 +70,12 @@ This starts:
 The API key is written to the `dt-seed` volume, and `provisioning/datasources/datasources.yml` reads it with `$__file{}`.
 
 Overrides: use `GRAFANA_VERSION` to pick another Grafana version and `DT_VERSION` for another Dependency-Track version. To start over with a fresh Dependency-Track, run `docker compose down -v`.
+
+## Dashboards and examples
+
+Bundled dashboards are listed under `includes` in `src/plugin.json`, and Grafana imports them when the app is enabled. Grafana only updates an imported dashboard when its `revision` changes, so bump `revision` in every dashboard you edit. Hide columns that data links need with a `custom.hidden` override instead of excluding them with a transformation: links are interpolated against the transformed frame.
+
+The local Grafana provisions `examples/alerting` as alert rules, and the e2e tests evaluate them. CI runs `terraform fmt` and `terraform validate` on `examples/terraform`.
 
 ## E2E tests
 
