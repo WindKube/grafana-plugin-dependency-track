@@ -22,7 +22,7 @@
   "schedule": ["before 6am on monday"],
   "prConcurrentLimit": 10,
   "prHourlyLimit": 4,
-  "platformAutomerge": true,
+  "platformAutomerge": false,
   "postUpdateOptions": ["gomodTidy", "pnpmDedupe"],
   "lockFileMaintenance": {
     "enabled": true,
