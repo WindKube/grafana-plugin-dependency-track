@@ -22,13 +22,11 @@
     "updated": "%TODAY%"
   },
   "includes": [
-    {
-      "type": "page",
-      "name": "Home",
-      "path": "/a/%PLUGIN_ID%/home",
-      "addToNav": true,
-      "defaultNav": true
-    },
+    { "type": "page", "name": "Overview", "path": "/a/%PLUGIN_ID%/overview", "addToNav": true, "defaultNav": true },
+    { "type": "page", "name": "Projects", "path": "/a/%PLUGIN_ID%/projects", "addToNav": true },
+    { "type": "page", "name": "Findings", "path": "/a/%PLUGIN_ID%/findings", "addToNav": true },
+    { "type": "page", "name": "Policy violations", "path": "/a/%PLUGIN_ID%/violations", "addToNav": true },
+    { "type": "page", "name": "SBOM freshness", "path": "/a/%PLUGIN_ID%/freshness", "addToNav": true },
     { "type": "datasource", "name": "Dependency-Track", "path": "datasource/plugin.json" },
     { "type": "dashboard", "name": "Portfolio overview", "path": "dashboards/portfolio-overview.json" },
     { "type": "dashboard", "name": "Project", "path": "dashboards/project.json" },
