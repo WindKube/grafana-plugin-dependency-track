@@ -10,10 +10,12 @@ import {
   DTDataSourceOptions,
   DTQuery,
   ProjectSelector,
+  QueryFormat,
   QueryMode,
   QueryType,
   SelectorMode,
 } from '../types';
+import { FindingFilterEditor, ViolationFilterEditor } from './FilterEditors';
 
 type Props = QueryEditorProps<DataSource, DTQuery, DTDataSourceOptions>;
 type Options = Array<ComboboxOption<string>>;
@@ -21,6 +23,13 @@ type Options = Array<ComboboxOption<string>>;
 const queryTypes: Array<ComboboxOption<QueryType>> = [
   { value: QueryType.PortfolioMetrics, label: 'Portfolio metrics' },
   { value: QueryType.ProjectMetrics, label: 'Project metrics' },
+  { value: QueryType.Findings, label: 'Findings' },
+  { value: QueryType.Violations, label: 'Policy violations' },
+];
+
+const formats: Array<SelectableValue<QueryFormat>> = [
+  { value: 'table', label: 'Table', description: 'One row per finding or violation' },
+  { value: 'count', label: 'Count', description: 'Counts per project for alerting' },
 ];
 
 const modes: Array<SelectableValue<QueryMode>> = [
@@ -60,6 +69,13 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
   const q = { ...DEFAULT_QUERY, ...query };
   const projects: ProjectSelector = { ...DEFAULT_QUERY.projects, ...query.projects };
   const isPortfolio = q.queryType === QueryType.PortfolioMetrics;
+  const isMetrics = isPortfolio || q.queryType === QueryType.ProjectMetrics;
+  const isViolations = q.queryType === QueryType.Violations;
+  const format = q.format ?? 'table';
+  const policyOptions = useOptions(
+    async () => (await datasource.getPolicies()).map((value) => ({ value })),
+    isViolations
+  );
 
   const tagOptions = useOptions(
     async () => (await datasource.getTags()).map((value) => ({ value })),
@@ -102,18 +118,37 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
             }}
           />
         </EditorField>
-        <EditorField label="Mode">
-          <RadioButtonGroup options={modes} value={q.mode} onChange={(mode) => update({ mode })} />
-        </EditorField>
-        <EditorField label="Metrics" width={60}>
-          <MultiCombobox
-            aria-label="Metrics"
-            options={metricOptions(isPortfolio)}
-            value={q.metrics}
-            onChange={(v) => update({ metrics: v.map((o) => o.value) })}
-          />
-        </EditorField>
+        {isMetrics ? (
+          <>
+            <EditorField label="Mode">
+              <RadioButtonGroup options={modes} value={q.mode} onChange={(mode) => update({ mode })} />
+            </EditorField>
+            <EditorField label="Metrics" width={60}>
+              <MultiCombobox
+                aria-label="Metrics"
+                options={metricOptions(isPortfolio)}
+                value={q.metrics}
+                onChange={(v) => update({ metrics: v.map((o) => o.value) })}
+              />
+            </EditorField>
+          </>
+        ) : (
+          <EditorField label="Format">
+            <RadioButtonGroup options={formats} value={format} onChange={(f) => update({ format: f })} />
+          </EditorField>
+        )}
       </EditorRow>
+      {q.queryType === QueryType.Findings && (
+        <FindingFilterEditor filter={q.findings ?? {}} onChange={(findings) => update({ findings })} />
+      )}
+      {isViolations && (
+        <ViolationFilterEditor
+          filter={q.violations ?? {}}
+          policies={withVariables(policyOptions)}
+          showGrouping={format === 'count'}
+          onChange={(violations) => update({ violations })}
+        />
+      )}
       {!isPortfolio && (
         <EditorRow>
           <EditorField label="Projects">

@@ -4,6 +4,32 @@ import { DataQuery } from '@grafana/schema';
 export enum QueryType {
   PortfolioMetrics = 'portfolioMetrics',
   ProjectMetrics = 'projectMetrics',
+  Findings = 'findings',
+  Violations = 'violations',
+}
+
+export type QueryFormat = 'table' | 'count';
+
+export const SEVERITIES = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'UNASSIGNED'];
+export const ANALYSIS_STATES = ['NOT_SET', 'EXPLOITABLE', 'IN_TRIAGE', 'FALSE_POSITIVE', 'NOT_AFFECTED', 'RESOLVED'];
+export const VIOLATION_STATES = ['FAIL', 'WARN', 'INFO'];
+export const RISK_TYPES = ['SECURITY', 'LICENSE', 'OPERATIONAL'];
+
+export interface FindingFilter {
+  severities?: string[];
+  analysisStates?: string[];
+  includeSuppressed?: boolean;
+  cvssMin?: number;
+  epssMin?: number;
+  kevOnly?: boolean;
+}
+
+export interface ViolationFilter {
+  states?: string[];
+  riskTypes?: string[];
+  policies?: string[];
+  includeSuppressed?: boolean;
+  groupByPolicy?: boolean;
 }
 
 export enum QueryMode {
@@ -28,6 +54,9 @@ export interface DTQuery extends DataQuery {
   mode?: QueryMode;
   metrics?: string[];
   projects?: ProjectSelector;
+  format?: QueryFormat;
+  findings?: FindingFilter;
+  violations?: ViolationFilter;
 }
 
 export const DEFAULT_METRICS = ['critical', 'high', 'medium', 'low', 'unassigned'];

@@ -15,21 +15,23 @@ export class DataSource extends DataSourceWithBackend<DTQuery, DTDataSourceOptio
   }
 
   applyTemplateVariables(query: DTQuery, scopedVars: ScopedVars): DTQuery {
-    const projects = query.projects;
-    if (!projects) {
+    const { projects, violations } = query;
+    if (!projects && !violations) {
       return query;
     }
     const srv = getTemplateSrv();
     const replace = (value?: string, format?: string) => (value ? srv.replace(value, scopedVars, format) : value);
+    const expand = (values?: string[]) => values?.flatMap((v) => (replace(v, 'csv') ?? '').split(',')).filter(Boolean);
     return {
       ...query,
-      projects: {
+      projects: projects && {
         ...projects,
         nameRegex: replace(projects.nameRegex, 'regex'),
         tag: replace(projects.tag),
         classifier: replace(projects.classifier),
-        uuids: projects.uuids?.flatMap((u) => (replace(u, 'csv') ?? '').split(',')).filter(Boolean),
+        uuids: expand(projects.uuids),
       },
+      violations: violations && { ...violations, policies: expand(violations.policies) },
     };
   }
 

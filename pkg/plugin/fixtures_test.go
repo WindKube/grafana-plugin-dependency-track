@@ -22,6 +22,21 @@ func readFixture(t *testing.T, name string) []byte {
 	return b
 }
 
+func filterFixture(t *testing.T, name string, keep func(map[string]any) bool) []map[string]any {
+	t.Helper()
+	var items []map[string]any
+	if err := json.Unmarshal(readFixture(t, name), &items); err != nil {
+		t.Fatal(err)
+	}
+	out := []map[string]any{}
+	for _, it := range items {
+		if keep(it) {
+			out = append(out, it)
+		}
+	}
+	return out
+}
+
 // fixtureDT serves the recorded Dependency-Track 5.2.2 responses.
 func fixtureDT(t *testing.T) *Datasource {
 	t.Helper()
@@ -67,6 +82,19 @@ func fixtureDT(t *testing.T) *Datasource {
 		case p == "/v1/violation":
 			w.Header().Set("X-Total-Count", "8")
 			_, _ = w.Write(readFixture(t, "violations"))
+		case p == "/v1/finding":
+			w.Header().Set("X-Total-Count", "13")
+			_, _ = w.Write(readFixture(t, "findings"))
+		case strings.HasPrefix(p, "/v1/finding/project/"):
+			uuid := strings.TrimPrefix(p, "/v1/finding/project/")
+			writeList(w, filterFixture(t, "findings", func(item map[string]any) bool {
+				return item["component"].(map[string]any)["project"] == uuid
+			}))
+		case strings.HasPrefix(p, "/v1/violation/project/"):
+			uuid := strings.TrimPrefix(p, "/v1/violation/project/")
+			writeList(w, filterFixture(t, "violations", func(item map[string]any) bool {
+				return item["project"].(map[string]any)["uuid"] == uuid
+			}))
 		case p == "/v1/metrics/portfolio/current":
 			_, _ = w.Write(readFixture(t, "portfolio_current"))
 		case strings.HasPrefix(p, "/v1/metrics/portfolio/since/"):

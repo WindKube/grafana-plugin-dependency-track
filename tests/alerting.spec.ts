@@ -72,3 +72,34 @@ test('alert rule on portfolio policy violations', async ({ request }) => {
   expect(results.find((r) => r.labels.metric === 'policyViolationsFail')?.value).toBe(1);
   expect(results.find((r) => r.labels.metric === 'kev')?.value).toBe(0);
 });
+
+test('alert rule on FAIL policy violations counts per project', async ({ request }) => {
+  const res = await request.post('/api/v1/eval', {
+    data: rule({
+      queryType: 'violations',
+      format: 'count',
+      violations: { states: ['FAIL'], riskTypes: ['OPERATIONAL'] },
+    }),
+  });
+  expect(res.ok()).toBeTruthy();
+  const results = series((await res.json()).results.C.frames);
+  expect(results).toHaveLength(5);
+  const firing = results.filter((r) => r.value === 1);
+  expect(firing).toHaveLength(1);
+  expect(firing[0].labels).toMatchObject({ project: 'web-frontend', state: 'FAIL', type: 'OPERATIONAL' });
+});
+
+test('alert rule on critical findings count', async ({ request }) => {
+  const res = await request.post('/api/v1/eval', {
+    data: rule({
+      queryType: 'findings',
+      format: 'count',
+      findings: { severities: ['CRITICAL'] },
+      projects: { mode: 'all', onlyLatest: true },
+    }),
+  });
+  expect(res.ok()).toBeTruthy();
+  const results = series((await res.json()).results.C.frames);
+  expect(results.filter((r) => r.value === 1).map((r) => r.labels.project)).toEqual(['inventory-service']);
+  expect(results.every((r) => r.labels.severity === 'critical')).toBeTruthy();
+});

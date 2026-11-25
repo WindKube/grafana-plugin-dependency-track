@@ -11,7 +11,40 @@ type Type string
 const (
 	TypePortfolioMetrics Type = "portfolioMetrics"
 	TypeProjectMetrics   Type = "projectMetrics"
+	TypeFindings         Type = "findings"
+	TypeViolations       Type = "violations"
 )
+
+type Format string
+
+const (
+	FormatTable Format = "table"
+	FormatCount Format = "count"
+)
+
+var (
+	Severities      = []string{"CRITICAL", "HIGH", "MEDIUM", "LOW", "UNASSIGNED"}
+	AnalysisStates  = []string{"NOT_SET", "EXPLOITABLE", "IN_TRIAGE", "FALSE_POSITIVE", "NOT_AFFECTED", "RESOLVED"}
+	ViolationStates = []string{"FAIL", "WARN", "INFO"}
+	RiskTypes       = []string{"SECURITY", "LICENSE", "OPERATIONAL"}
+)
+
+type FindingFilter struct {
+	Severities        []string `json:"severities,omitempty"`
+	AnalysisStates    []string `json:"analysisStates,omitempty"`
+	IncludeSuppressed bool     `json:"includeSuppressed,omitempty"`
+	CVSSMin           *float64 `json:"cvssMin,omitempty"`
+	EPSSMin           *float64 `json:"epssMin,omitempty"`
+	KEVOnly           bool     `json:"kevOnly,omitempty"`
+}
+
+type ViolationFilter struct {
+	States            []string `json:"states,omitempty"`
+	RiskTypes         []string `json:"riskTypes,omitempty"`
+	Policies          []string `json:"policies,omitempty"`
+	IncludeSuppressed bool     `json:"includeSuppressed,omitempty"`
+	GroupByPolicy     bool     `json:"groupByPolicy,omitempty"`
+}
 
 type Mode string
 
@@ -41,10 +74,13 @@ type ProjectSelector struct {
 }
 
 type Query struct {
-	QueryType Type            `json:"queryType"`
-	Mode      Mode            `json:"mode,omitempty"`
-	Metrics   []string        `json:"metrics,omitempty"`
-	Projects  ProjectSelector `json:"projects"`
+	QueryType  Type            `json:"queryType"`
+	Mode       Mode            `json:"mode,omitempty"`
+	Metrics    []string        `json:"metrics,omitempty"`
+	Projects   ProjectSelector `json:"projects"`
+	Format     Format          `json:"format,omitempty"`
+	Findings   FindingFilter   `json:"findings"`
+	Violations ViolationFilter `json:"violations"`
 }
 
 var DefaultMetrics = []string{"critical", "high", "medium", "low", "unassigned"}
@@ -68,12 +104,23 @@ func Parse(raw json.RawMessage) (*Query, error) {
 	if q.Projects.Mode == "" {
 		q.Projects.Mode = SelectAll
 	}
+	if q.Format == "" {
+		q.Format = FormatTable
+	}
 	return q, q.validate()
 }
 
 func (q *Query) validate() error {
 	switch q.QueryType {
 	case TypePortfolioMetrics, TypeProjectMetrics:
+	case TypeFindings, TypeViolations:
+		if q.Format != FormatTable && q.Format != FormatCount {
+			return fmt.Errorf("unknown format %q", q.Format)
+		}
+		if err := q.validateFilters(); err != nil {
+			return err
+		}
+		return q.Projects.validate()
 	default:
 		return fmt.Errorf("unknown query type %q", q.QueryType)
 	}

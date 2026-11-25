@@ -92,6 +92,10 @@ func (d *Datasource) query(ctx context.Context, dq backend.DataQuery) backend.Da
 		frames, err = d.portfolioMetrics(ctx, q, dq.TimeRange)
 	case query.TypeProjectMetrics:
 		frames, err = d.projectMetrics(ctx, q, dq.TimeRange)
+	case query.TypeFindings:
+		frames, err = d.findings(ctx, q)
+	case query.TypeViolations:
+		frames, err = d.violations(ctx, q)
 	}
 	if err != nil {
 		return errorResponse(err)
