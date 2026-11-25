@@ -28,14 +28,14 @@ jobs:
         run: pnpm run build
 
       - name: App compatibility check
-        uses: grafana/plugin-actions/is-compatible@is-compatible/v1.0.3
+        uses: grafana/plugin-actions/is-compatible@4698961fa64137fcac207108397ebe8a738a33d1 # is-compatible/v1.0.3
         with:
           module: ./src/module.tsx
           comment-pr: 'no'
           fail-if-incompatible: 'yes'
 
       - name: Datasource compatibility check
-        uses: grafana/plugin-actions/is-compatible@is-compatible/v1.0.3
+        uses: grafana/plugin-actions/is-compatible@4698961fa64137fcac207108397ebe8a738a33d1 # is-compatible/v1.0.3
         with:
           module: ./src/datasource/module.ts
           comment-pr: 'no'
