@@ -24,6 +24,8 @@ services:
       DT_TELEMETRY_SUBMISSION_DEFAULT_ENABLED: 'false'
     ports:
       - 127.0.0.1:8081:8080
+    volumes:
+      - dt-apiserver:/data
     deploy:
       resources:
         limits:
@@ -62,5 +64,6 @@ services:
       - dt-seed:/seed-out
 
 volumes:
+  dt-apiserver: {}
   dt-postgres: {}
   dt-seed: {}
