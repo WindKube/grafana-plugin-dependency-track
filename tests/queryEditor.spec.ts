@@ -1,11 +1,11 @@
 import { test, expect } from '@grafana/plugin-e2e';
 
-test('smoke: should render query editor', async ({ panelEditPage, readProvisionedDataSource }) => {
+test('smoke: should render query editor', async ({ page, panelEditPage, readProvisionedDataSource }) => {
   const ds = await readProvisionedDataSource({ fileName: 'datasources.yml' });
   await panelEditPage.datasource.set(ds.name);
-  const row = panelEditPage.getQueryEditorRow('A');
-  await expect(row.getByRole('combobox', { name: 'Query type' })).toBeVisible();
-  await expect(row.getByRole('button', { name: 'Remove Critical' })).toBeVisible();
+  // Combobox in Grafana < 13.2 does not expose aria-label as its accessible name.
+  await expect(page.getByText('Query type', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Remove Critical' })).toBeVisible();
 });
 
 test('portfolio metrics return the seeded critical count', async ({ panelEditPage, readProvisionedDataSource }) => {
