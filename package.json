@@ -12,7 +12,7 @@
     "e2e": "playwright test",
     "screenshots": "playwright test -c scripts/screenshots/playwright.config.ts",
     "server": "docker compose up --build",
-    "sign": "sign-plugin"
+    "sign": "sign-plugin --rootUrls http://localhost:3000/"
   },
   "author": "WindKube",
   "license": "Apache-2.0",

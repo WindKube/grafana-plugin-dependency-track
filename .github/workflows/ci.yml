@@ -88,9 +88,8 @@ jobs:
             echo "has-e2e=true" >> $GITHUB_OUTPUT
           fi
 
-      # Private signature until Grafana grants the community level; then drop --rootUrls.
       - name: Sign plugin
-        run: pnpm run sign --rootUrls http://localhost:3000/
+        run: pnpm run sign
         if: ${{ env.HAS_SIGNING_TOKEN == 'true' }}
         env:
           GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
