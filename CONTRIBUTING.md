@@ -107,7 +107,7 @@ Dependencies are updated by Renovate.
 
 Releases are built, signed and attested by `.github/workflows/release.yml`. Signing needs a Grafana Cloud access policy token with the `plugins:write` scope in the `GRAFANA_ACCESS_POLICY_TOKEN` repository secret.
 
-Until Grafana approves the plugin for the community signature level, the signing service only issues private signatures, which need root URLs. CI and releases sign for `http://localhost:3000/`. Once the community level is granted, remove `--rootUrls` from `ci.yml` and `sign_root_urls` from `release.yml`.
+Until Grafana approves the plugin for the community signature level, the signing service only issues private signatures, which need root URLs. The `sign` script in `package.json` therefore signs for `http://localhost:3000/`, which covers CI and releases. Once the community level is granted, remove `--rootUrls` from that script. It lives there rather than in `release.yml` because `grafana/plugin-actions` passes `sign_root_urls` to pnpm after a literal `--`, so `sign-plugin` never sees it.
 
 1. Bump `version` in `package.json` and move the `Unreleased` entries in `CHANGELOG.md` under that version.
 2. Merge to `main`, then tag the commit: `git tag v1.0.0 && git push origin v1.0.0`.
