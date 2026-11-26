@@ -1,8 +1,0 @@
-global:
-  enabled: true
-  severity: warning
-
-analyzers:
-  # Aborts the whole scan while the windkube Grafana Cloud org does not exist. Remove once it does.
-  org:
-    enabled: false

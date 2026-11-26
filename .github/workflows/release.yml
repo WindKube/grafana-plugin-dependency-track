@@ -28,4 +28,6 @@ jobs:
           # renovate: datasource=golang-version depName=go
           go-version: '1.26.11'
           policy_token: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
+          # Private signature until Grafana grants the community level; then remove this line.
+          sign_root_urls: http://localhost:3000/
           attestation: true

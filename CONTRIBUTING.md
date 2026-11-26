@@ -107,6 +107,8 @@ Dependencies are updated by Renovate.
 
 Releases are built, signed and attested by `.github/workflows/release.yml`. Signing needs a Grafana Cloud access policy token with the `plugins:write` scope in the `GRAFANA_ACCESS_POLICY_TOKEN` repository secret.
 
+Until Grafana approves the plugin for the community signature level, the signing service only issues private signatures, which need root URLs. CI and releases sign for `http://localhost:3000/`. Once the community level is granted, remove `--rootUrls` from `ci.yml` and `sign_root_urls` from `release.yml`.
+
 1. Bump `version` in `package.json` and move the `Unreleased` entries in `CHANGELOG.md` under that version.
 2. Merge to `main`, then tag the commit: `git tag v1.0.0 && git push origin v1.0.0`.
 3. The workflow creates a draft GitHub release with the signed archive and its `.sha1`. Publish it, then submit both asset links under **My Plugins → Submit Plugin** on grafana.com.
@@ -114,9 +116,7 @@ Releases are built, signed and attested by `.github/workflows/release.yml`. Sign
 To run the plugin validator locally, build the archive the way CI does and run:
 
 ```bash
-docker run --pull=always -v $PWD/plugin.zip:/archive.zip -v $PWD:/src grafana/plugin-validator-cli -config /src/.github/plugin-validator.yaml -sourceCodeUri file:///src /archive.zip
+docker run --pull=always -v $PWD/plugin.zip:/archive.zip -v $PWD:/src grafana/plugin-validator-cli -sourceCodeUri file:///src /archive.zip
 ```
-
-`.github/plugin-validator.yaml` disables the `org` analyzer, which aborts the scan while the `windkube` Grafana Cloud organization doesn't exist. Remove that entry once the organization is created.
 
 Backend binaries in the archive must have mode `0755`. A umask of `002` produces `0775`, which the validator rejects.

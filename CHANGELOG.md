@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2026-11-26)
 
 Initial release for Grafana 13 and Dependency-Track 5.x.
 
@@ -24,3 +24,7 @@ Initial release for Grafana 13 and Dependency-Track 5.x.
 
 - Alert rules in Grafana provisioning format.
 - Terraform configuration for the data source and alert rules.
+
+### Signature
+
+- Signed with a temporary private signature for `http://localhost:3000/` while the plugin awaits the community signature level. Later releases are signed as community.
