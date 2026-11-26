@@ -114,9 +114,7 @@ Releases are built, signed and attested by `.github/workflows/release.yml`. Sign
 To run the plugin validator locally, build the archive the way CI does and run:
 
 ```bash
-docker run --pull=always -v $PWD/plugin.zip:/archive.zip -v $PWD:/src grafana/plugin-validator-cli -config /src/.github/plugin-validator.yaml -sourceCodeUri file:///src /archive.zip
+docker run --pull=always -v $PWD/plugin.zip:/archive.zip -v $PWD:/src grafana/plugin-validator-cli -sourceCodeUri file:///src /archive.zip
 ```
-
-`.github/plugin-validator.yaml` disables the `org` analyzer, which aborts the scan while the `windkube` Grafana Cloud organization doesn't exist. Remove that entry once the organization is created.
 
 Backend binaries in the archive must have mode `0755`. A umask of `002` produces `0775`, which the validator rejects.

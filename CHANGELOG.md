@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2026-11-26)
 
 Initial release for Grafana 13 and Dependency-Track 5.x.
 
